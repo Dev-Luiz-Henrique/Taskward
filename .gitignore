@@ -8,6 +8,10 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /.idea/vcs.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/aws.xml
+/.idea/material_theme_project_new.xml
+/.idea/studiobot.xml
 .DS_Store
 /build
 /captures
