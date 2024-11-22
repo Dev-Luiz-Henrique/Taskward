@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Taskward</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_botton_bar_task">Hello blank fragment</string>
+    <string name="menu_botton_bar_reward">Hello blank fragment</string>
+    <string name="menu_botton_bar_profile">Hello blank fragment</string>
 </resources>
