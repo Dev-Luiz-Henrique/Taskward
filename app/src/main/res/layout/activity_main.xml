@@ -31,6 +31,7 @@
         app:labelVisibilityMode="auto"
         app:menu="@menu/menu_main"
         app:itemPaddingTop="20dp"
-        app:itemPaddingBottom="20dp"/>
+        app:itemPaddingBottom="20dp"
+        android:background="@color/gray_nav"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
