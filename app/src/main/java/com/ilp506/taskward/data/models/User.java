@@ -6,9 +6,9 @@ public class User {
 
     public int id;
     public String name;
+    public String photo;
     public int points;
     public Timestamp createdAt;
-    public String icon;
 
     public int getId() {
         return id;
@@ -24,6 +24,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public int getPoints() {
@@ -42,11 +50,16 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void validate() throws IllegalArgumentException {
+        if (id < 0)
+            throw new IllegalArgumentException("ID must be positive");
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Name is required");
+        if (photo != null && (photo.length() > 255))
+            throw new IllegalArgumentException("Photo must be a valid URL and less than 255 characters");
+        if (points < 0)
+            throw new IllegalArgumentException("Points must be greater than or equal to 0");
+        if (createdAt == null)
+            throw new IllegalArgumentException("CreatedAt is required");
     }
 }
