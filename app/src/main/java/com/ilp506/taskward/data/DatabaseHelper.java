@@ -5,7 +5,6 @@ import static com.ilp506.taskward.utils.SQLScriptUtils.executeSQLFromResource;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.utils.Logger;
@@ -16,11 +15,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "taskward.db";
     private static final int DATABASE_VERSION = 1;
 
+    private static DatabaseHelper instance;
+
     private final Context context;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
+        this.context = context.getApplicationContext();;
+    }
+
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (instance == null)
+            instance = new DatabaseHelper(context.getApplicationContext());
+        return instance;
     }
 
     @Override
@@ -31,9 +38,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Logger.d(TAG, "Database created successfully.");
     }
 
+    // TODO: Implementar a logica de atualizacao do banco de dados
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Logger.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
         // ...
+        Logger.d(TAG, "Database upgraded successfully.");
     }
 }
