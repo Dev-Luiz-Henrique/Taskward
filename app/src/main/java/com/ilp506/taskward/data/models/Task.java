@@ -25,6 +25,10 @@ public class Task {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getIcon() {
         return icon;
     }
@@ -98,6 +102,8 @@ public class Task {
     }
 
     public void validate() throws IllegalArgumentException {
+        if (id < 0)
+            throw new IllegalArgumentException("ID must be greater than or equal to 0.");
         if (icon == null || icon.trim().isEmpty())
             throw new IllegalArgumentException("Icon is required.");
         if (title == null || title.trim().isEmpty())

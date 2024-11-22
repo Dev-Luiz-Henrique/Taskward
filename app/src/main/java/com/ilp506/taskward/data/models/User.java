@@ -4,11 +4,11 @@ import java.sql.Timestamp;
 
 public class User {
 
-    public int id;
-    public String name;
-    public String photo; // TODO: implementar a funcionalidade de colocar fotos
-    public int points;
-    public Timestamp createdAt;
+    private int id;
+    private String name;
+    private String photo; // TODO: implementar a funcionalidade de colocar fotos
+    private int points;
+    private Timestamp createdAt;
 
     public User() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
@@ -16,6 +16,10 @@ public class User {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -51,6 +55,8 @@ public class User {
     }
 
     public void validate() throws IllegalArgumentException {
+        if (id < 0)
+            throw new IllegalArgumentException("ID must be greater than or equal to 0.");
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Name is required.");
         if (photo != null && (photo.length() > 255))
