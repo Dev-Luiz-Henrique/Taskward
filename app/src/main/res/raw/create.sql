@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   title TEXT NOT NULL,
   description TEXT,
   frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'monthly', 'yearly')) NOT NULL,
-  frequency_interval INTEGER DEFAULT 1 CHECK (frequency_interval > 0),
-  start_date TIMESTAMP,
+  frequency_interval INTEGER DEFAULT 0 CHECK (frequency_interval >= 0),
+  start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   end_date TIMESTAMP,
   points_reward INTEGER DEFAULT 0 CHECK (points_reward >= 0),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

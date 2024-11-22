@@ -14,7 +14,8 @@ import java.util.Locale;
 public class DateUtils {
 
     private static final String TAG = "DateUtils";
-    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 
     private DateUtils() {
         // Private constructor to prevent instantiation
