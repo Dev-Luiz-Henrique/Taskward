@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+/**
+ * Utility class for executing SQL scripts from raw resource files.
+ */
 public class SQLScriptUtils {
 
     private static final String TAG = SQLScriptUtils.class.getSimpleName();
