@@ -1,4 +1,4 @@
-package com.ilp506.taskward.enums;
+package com.ilp506.taskward.data.enums;
 
 public enum TaskFrequencyEnum {
     DAILY,

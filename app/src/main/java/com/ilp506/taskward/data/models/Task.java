@@ -1,6 +1,6 @@
 package com.ilp506.taskward.data.models;
 
-import com.ilp506.taskward.enums.TaskFrequencyEnum;
+import com.ilp506.taskward.data.enums.TaskFrequencyEnum;
 
 import java.sql.Timestamp;
 
