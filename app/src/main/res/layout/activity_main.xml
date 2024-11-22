@@ -11,12 +11,26 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/readex_pro"
         android:text="Hello World"
         android:textColor="@color/black"
-        android:fontFamily=""
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/btnv"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:labelVisibilityMode="auto"
+        app:menu="@menu/menu_main"
+        app:itemPaddingTop="20dp"
+        app:itemPaddingBottom="20dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
