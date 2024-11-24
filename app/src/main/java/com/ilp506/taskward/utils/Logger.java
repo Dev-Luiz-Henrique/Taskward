@@ -14,6 +14,10 @@ public class Logger {
         if (ENABLE_LOGS) Log.e(tag, message, throwable);
     }
 
+    public static void e(String tag, String message) {
+        if (ENABLE_LOGS) Log.e(tag, message);
+    }
+
     public static void i(String tag, String message) {
         if (ENABLE_LOGS) Log.i(tag, message);
     }
