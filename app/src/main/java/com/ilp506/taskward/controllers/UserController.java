@@ -24,15 +24,11 @@ public class UserController {
     /**
      * Creates a new user.
      *
-     * @param name  User's name.
-     * @param photo User's photo (optional).
+     * @param user User object containing user details.
      * @return OperationResponse indicating success or failure.
      */
-    public OperationResponse<User> createUser(String name, String photo) {
+    public OperationResponse<User> createUser(User user) {
         try {
-            User user = new User();
-            user.setName(name);
-            user.setPhoto(photo);
             user.validate();
 
             userRepository.createUser(user);
@@ -74,22 +70,18 @@ public class UserController {
     /**
      * Updates the details of a user.
      *
-     * @param userId ID of the user to update.
-     * @param name   New name of the user.
-     * @param photo  New photo URL of the user.
+     * @param user User object containing updated details.
      * @return OperationResponse indicating success or failure.
      */
-    public OperationResponse<User> updateUser(int userId, String name, String photo) {
+    public OperationResponse<User> updateUser(User user) {
         try {
-            User user = userRepository.getUserById(userId);
-            if (user == null)
+            User existingUser = userRepository.getUserById(user.getId());
+            if (existingUser == null)
                 return OperationResponse.failure("User not found");
 
-            user.setName(name);
-            user.setPhoto(photo);
             user.validate();
-            userRepository.updateUser(user);
 
+            userRepository.updateUser(user);
             return OperationResponse.success("User updated successfully", user);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
@@ -111,8 +103,8 @@ public class UserController {
      */
     public OperationResponse<Void> deleteUser(int userId) {
         try {
-            User user = userRepository.getUserById(userId);
-            if (user == null)
+            User existingUser = userRepository.getUserById(userId);
+            if (existingUser == null)
                 return OperationResponse.failure("User not found");
 
             userRepository.deleteUser(userId);
@@ -135,14 +127,15 @@ public class UserController {
      */
     public OperationResponse<User> updateUserPoints(int userId, int points) {
         try {
-            User user = userRepository.getUserById(userId);
-            if (user == null)
+            User existingUser = userRepository.getUserById(userId);
+            if (existingUser == null)
                 return OperationResponse.failure("User not found");
 
-            user.setPoints(points);
-            user.validate();
+            existingUser.setPoints(points);
+            existingUser.validate();
+
             userRepository.updateUserPoints(userId, points);
-            return OperationResponse.success("User points updated successfully", user);
+            return OperationResponse.success("User points updated successfully", existingUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid user data provided");
