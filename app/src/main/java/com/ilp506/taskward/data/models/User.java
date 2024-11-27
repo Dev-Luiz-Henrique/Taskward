@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 /**
  * Represents a user in the system.
+ * This class encapsulates the properties and behaviors of a user entity.
+ * It includes fields for the user's ID, name, photo, points, and creation timestamp.
  */
 public class User {
 
@@ -14,7 +16,7 @@ public class User {
     private Timestamp createdAt;
 
     /**
-     * Default constructor that initializes the creation timestamp to the current time.
+     * Constructs a new User object with the current timestamp as the creation time.
      */
     public User() {
         this.createdAt = new Timestamp(System.currentTimeMillis());

@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS rewards (
   title TEXT NOT NULL,
   description TEXT,
   points_required INTEGER NOT NULL CHECK (points_required > 0),
-  date_redeemed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date_redeemed TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
