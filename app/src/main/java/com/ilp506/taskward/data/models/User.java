@@ -68,8 +68,6 @@ public class User {
      * @throws IllegalArgumentException If any validation rule is violated.
      */
     public void validate() throws IllegalArgumentException {
-        if (id < 0)
-            throw new IllegalArgumentException("ID must be greater than or equal to 0.");
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Name is required.");
         if (photo != null && photo.length() > 255)
