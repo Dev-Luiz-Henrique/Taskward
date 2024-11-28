@@ -36,7 +36,7 @@ public class UserRepository {
      * @param cursor The cursor containing the queried data.
      * @return A User instance populated with the cursor's data.
      */
-    private User mapCursorToUser(Cursor cursor) {
+    protected User mapCursorToUser(Cursor cursor) {
         User user = new User();
         try {
             user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_ID)));
@@ -57,15 +57,22 @@ public class UserRepository {
      * Creates a new user in the database.
      *
      * @param user The User instance to be created.
+     * @return The created User instance.
      */
-    public void createUser(User user) {
+    public User createUser(User user) {
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
 
             ContentValues values = new ContentValues();
             values.put(UserTable.COLUMN_NAME, user.getName());
             values.put(UserTable.COLUMN_PHOTO, user.getPhoto());
-            db.insertOrThrow(UserTable.TABLE_NAME, null, values);
 
+            long newId = db.insertOrThrow(UserTable.TABLE_NAME, null, values);
+            if (newId == -1) {
+                Logger.e(TAG, "Failed to insert new user");
+                throw new DatabaseOperationException("Failed to insert new user");
+            }
+
+            return getUserById((int) newId);
         } catch (SQLiteException e) {
             Logger.e(TAG, "SQLite error during user creation: " + e.getMessage(), e);
             throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
@@ -111,8 +118,9 @@ public class UserRepository {
      * Updates an existing user's details in the database.
      *
      * @param user The User instance containing updated data.
+     * @return The updated User instance.
      */
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         final String selection = UserTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(user.getId())};
 
@@ -122,8 +130,11 @@ public class UserRepository {
             values.put(UserTable.COLUMN_PHOTO, user.getPhoto());
             values.put(UserTable.COLUMN_POINTS, user.getPoints());
 
-            db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+            int rowsUpdated = db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+            if (rowsUpdated == 0)
+                throw new DatabaseOperationException("No rows updated. User not found.");
 
+            return getUserById(user.getId());
         } catch (SQLiteException e) {
             Logger.e(TAG, "SQLite error during user update: " + e.getMessage(), e);
             throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
@@ -153,8 +164,9 @@ public class UserRepository {
      *
      * @param userId The ID of the user to update.
      * @param points The new points value to set.
+     * @return The updated User instance.
      */
-    public void updateUserPoints(int userId, int points) {
+    public User updateUserPoints(int userId, int points) {
         final String selection = UserTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(userId)};
 
@@ -162,8 +174,11 @@ public class UserRepository {
             ContentValues values = new ContentValues();
             values.put(UserTable.COLUMN_POINTS, points);
 
-            db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+            int rowsUpdated = db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
+            if (rowsUpdated == 0)
+                throw new DatabaseOperationException("No rows updated. User not found.");
 
+            return getUserById(userId);
         } catch (SQLiteException e) {
             Logger.e(TAG, "SQLite error during updateUserPoints: " + e.getMessage(), e);
             throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
