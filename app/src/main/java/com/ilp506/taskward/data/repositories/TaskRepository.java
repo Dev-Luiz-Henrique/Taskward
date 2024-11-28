@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import com.ilp506.taskward.data.DatabaseContract.TaskTable;
 import com.ilp506.taskward.data.DatabaseHelper;
@@ -51,7 +52,7 @@ public class TaskRepository {
             task.setIcon(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_ICON)));
             task.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_TITLE)));
             task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_DESCRIPTION)));
-            task.setFrequency(TaskFrequencyEnum.valueOf(
+            task.setFrequency(TaskFrequencyEnum.fromString(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_FREQUENCY)))
             );
             task.setFrequencyInterval(cursor.getInt(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_FREQUENCY_INTERVAL)));
@@ -80,6 +81,7 @@ public class TaskRepository {
      *
      * @param task The Task instance to be created.
      * @return The created Task instance.
+     * @throws DatabaseOperationException If an error occurs during the database operation, such as an insertion failure.
      * @throws RuntimeException If an error occurs during cursor mapping when retrieving the newly created task.
      */
     public Task createTask(Task task) {
@@ -89,7 +91,7 @@ public class TaskRepository {
             values.put(TaskTable.COLUMN_ICON, task.getIcon());
             values.put(TaskTable.COLUMN_TITLE, task.getTitle());
             values.put(TaskTable.COLUMN_DESCRIPTION, task.getDescription());
-            values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().name());
+            values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().getValue());
             values.put(TaskTable.COLUMN_FREQUENCY_INTERVAL, task.getFrequencyInterval());
             values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatTimestamp(task.getStartDate()));
             values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatTimestamp(task.getEndDate()));
@@ -97,14 +99,14 @@ public class TaskRepository {
 
             long newId = db.insertOrThrow(TaskTable.TABLE_NAME, null, values);
             if (newId == -1) {
-                Logger.e(TAG, "Failed to insert new task");
-                throw new RuntimeException("Failed to insert new task");
+                Logger.e(TAG, "Failed to create task");
+                throw new DatabaseOperationException("Failed to create task");
             }
             return getTaskById((int) newId);
         }
-        catch (Exception e) {
-            Logger.e(TAG, "Error creating task: " + e.getMessage(), e);
-            throw new RuntimeException("Error creating task: " + e.getMessage(), e);
+        catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during task creation: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
 
@@ -136,9 +138,9 @@ public class TaskRepository {
                 Task task = mapCursorToTask(cursor);
                 tasks.add(task);
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "Error getting all tasks: " + e.getMessage(), e);
-            throw new RuntimeException("Error getting all tasks: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "Error retrieving tasks: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Error retrieving tasks: " + e.getMessage(), e);
         }
         return tasks;
     }
@@ -150,6 +152,7 @@ public class TaskRepository {
      *
      * @param taskId The ID of the task to retrieve.
      * @return The Task instance if found, or null if not found.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
      * @throws RuntimeException If an error occurs during cursor mapping when retrieving the task.
      */
     public Task getTaskById(int taskId) {
@@ -174,9 +177,9 @@ public class TaskRepository {
                 Logger.w(TAG, "Task not found with ID: " + taskId);
                 return null;
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "Error mapping cursor to Task: " + e.getMessage(), e);
-            throw new RuntimeException("Error mapping cursor to Task: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during getTaskById: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
 
@@ -187,7 +190,8 @@ public class TaskRepository {
      *
      * @param task The Task instance containing updated data.
      * @return The updated Task instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the task was not found.
+     * @throws DatabaseOperationException If no rows are updated, meaning the task was not found
+     * or there was an error during the update.
      * @throws RuntimeException If an error occurs during the database operation.
      */
     public Task updateTask(Task task) {
@@ -200,7 +204,7 @@ public class TaskRepository {
             values.put(TaskTable.COLUMN_ICON, task.getIcon());
             values.put(TaskTable.COLUMN_TITLE, task.getTitle());
             values.put(TaskTable.COLUMN_DESCRIPTION, task.getDescription());
-            values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().name());
+            values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().getValue());
             values.put(TaskTable.COLUMN_FREQUENCY_INTERVAL, task.getFrequencyInterval());
             values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatTimestamp(task.getStartDate()));
             values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatTimestamp(task.getEndDate()));
@@ -212,9 +216,9 @@ public class TaskRepository {
                 throw new DatabaseOperationException("No rows updated. Task not found.");
 
             return getTaskById(task.getId());
-        } catch (Exception e) {
-            Logger.e(TAG, "Error updating task: " + e.getMessage(), e);
-            throw new RuntimeException("Error updating task: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during task update: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
 
@@ -233,9 +237,9 @@ public class TaskRepository {
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
             db.delete(TaskTable.TABLE_NAME, selection, selectionArgs);
 
-        } catch (Exception e) {
-            Logger.e(TAG, "Error deleting task: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Error deleting task: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during task deletion: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
 }

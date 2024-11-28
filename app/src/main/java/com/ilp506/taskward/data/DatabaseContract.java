@@ -50,4 +50,20 @@ public final class DatabaseContract {
                 COLUMN_POINTS_REWARD, COLUMN_CREATED_AT
         };
     }
+
+    public static class TaskEventTable {
+        public static final String TABLE_NAME = "task_events";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_TASK_ID = "task_id";
+        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_SCHEDULED_DATE = "scheduled_date";
+        public static final String COLUMN_COMPLETED_DATE = "completed_date";
+        public static final String COLUMN_POINTS_EARNED = "points_earned";
+        public static final String COLUMN_STATUS = "status";
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String[] ALL_COLUMNS = {
+                COLUMN_ID, COLUMN_TASK_ID, COLUMN_USER_ID, COLUMN_SCHEDULED_DATE,
+                COLUMN_COMPLETED_DATE, COLUMN_POINTS_EARNED, COLUMN_STATUS, COLUMN_CREATED_AT
+        };
+    }
 }

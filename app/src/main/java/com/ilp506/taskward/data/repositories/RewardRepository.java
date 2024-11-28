@@ -180,7 +180,8 @@ public class RewardRepository {
      *
      * @param reward The Reward instance containing updated data.
      * @return The updated Reward instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the reward was not found.
+     * @throws DatabaseOperationException If no rows are updated, meaning the reward was not found
+     * or there was an error during the update.
      * @throws RuntimeException If an error occurs while mapping the cursor data to the updated Reward object.
      */
     public Reward updateReward(Reward reward) {

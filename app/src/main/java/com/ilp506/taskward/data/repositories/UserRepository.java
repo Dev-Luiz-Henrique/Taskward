@@ -134,7 +134,8 @@ public class UserRepository {
      *
      * @param user The User instance containing updated data.
      * @return The updated User instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found.
+     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found
+     * or there was an error during the update.
      * @throws RuntimeException If an error occurs while mapping the cursor data to the updated User object.
      */
     public User updateUser(User user) {
