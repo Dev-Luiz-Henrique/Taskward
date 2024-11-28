@@ -31,8 +31,8 @@ public class UserController {
         try {
             user.validate();
 
-            userRepository.createUser(user);
-            return OperationResponse.success("User created successfully", user);
+            User createdUser = userRepository.createUser(user);
+            return OperationResponse.success("User created successfully", createdUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid user data provided");
@@ -81,8 +81,8 @@ public class UserController {
 
             user.validate();
 
-            userRepository.updateUser(user);
-            return OperationResponse.success("User updated successfully", user);
+            User updatedUser = userRepository.updateUser(user);
+            return OperationResponse.success("User updated successfully", updatedUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid user data provided");
@@ -108,6 +108,7 @@ public class UserController {
                 return OperationResponse.failure("User not found");
 
             userRepository.deleteUser(userId);
+
             return OperationResponse.success("User deleted successfully");
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
@@ -134,8 +135,8 @@ public class UserController {
             existingUser.setPoints(points);
             existingUser.validate();
 
-            userRepository.updateUserPoints(userId, points);
-            return OperationResponse.success("User points updated successfully", existingUser);
+            User updatedUser = userRepository.updateUserPoints(userId, points);
+            return OperationResponse.success("User points updated successfully", updatedUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid user data provided");
