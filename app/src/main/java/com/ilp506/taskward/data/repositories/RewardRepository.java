@@ -44,7 +44,7 @@ public class RewardRepository {
      * @return A Reward instance populated with the cursor's data.
      * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
      */
-    private Reward mapCursorToReward(Cursor cursor) {
+    protected Reward mapCursorToReward(Cursor cursor) {
         Reward reward = new Reward();
         try {
             reward.setId(cursor.getInt(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_ID)));
@@ -53,11 +53,13 @@ public class RewardRepository {
             reward.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_TITLE)));
             reward.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_DESCRIPTION)));
             reward.setPointsRequired(cursor.getInt(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_POINTS_REQUIRED)));
+            reward.setDateRedeemed(DateUtils.parseTimestamp(
+                    cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_DATE_REDEEMED))
+            ));
+            reward.setCreatedAt(DateUtils.parseTimestamp(
+                    cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_CREATED_AT))
+            ));
 
-            String dateRedeemed = cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_DATE_REDEEMED));
-            reward.setDateRedeemed(DateUtils.parseTimestamp(dateRedeemed));
-            String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_CREATED_AT));
-            reward.setCreatedAt(DateUtils.parseTimestamp(createdAt));
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to Reward: " + e.getMessage(), e);
             throw new RuntimeException("Error mapping cursor to Reward: " + e.getMessage(), e);

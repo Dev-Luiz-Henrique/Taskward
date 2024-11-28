@@ -48,9 +48,10 @@ public class UserRepository {
             user.setName(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME)));
             user.setPhoto(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_PHOTO)));
             user.setPoints(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_POINTS)));
+            user.setCreatedAt(DateUtils.parseTimestamp(
+                    cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_CREATED_AT))
+            ));
 
-            String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_CREATED_AT));
-            user.setCreatedAt(DateUtils.parseTimestamp(createdAtString));
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to User: " + e.getMessage(), e);
             throw new RuntimeException("Error mapping cursor to User: " + e.getMessage(), e);
