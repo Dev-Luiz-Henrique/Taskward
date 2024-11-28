@@ -22,6 +22,17 @@ public class UserController {
     }
 
     /**
+     * Validates the user ID to ensure it is greater than 0.
+     *
+     * @param userId ID of the user to validate.
+     * @throws IllegalArgumentException If the user ID is less than or equal to 0.
+     */
+    private void validateUserId(int userId) {
+        if (userId <= 0) throw new IllegalArgumentException("User ID must be greater than 0.");
+    }
+
+
+    /**
      * Creates a new user.
      *
      * @param user User object containing user details.
@@ -75,6 +86,7 @@ public class UserController {
      */
     public OperationResponse<User> updateUser(User user) {
         try {
+            validateUserId(user.getId());
             User existingUser = userRepository.getUserById(user.getId());
             if (existingUser == null)
                 return OperationResponse.failure("User not found");
@@ -103,6 +115,7 @@ public class UserController {
      */
     public OperationResponse<Void> deleteUser(int userId) {
         try {
+            validateUserId(userId);
             User existingUser = userRepository.getUserById(userId);
             if (existingUser == null)
                 return OperationResponse.failure("User not found");
@@ -128,6 +141,7 @@ public class UserController {
      */
     public OperationResponse<User> updateUserPoints(int userId, int points) {
         try {
+            validateUserId(userId);
             User existingUser = userRepository.getUserById(userId);
             if (existingUser == null)
                 return OperationResponse.failure("User not found");

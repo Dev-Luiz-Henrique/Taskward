@@ -1,5 +1,9 @@
 package com.ilp506.taskward.data.models;
 
+import androidx.annotation.NonNull;
+
+import com.ilp506.taskward.utils.DateUtils;
+
 import java.sql.Timestamp;
 
 /**
@@ -60,6 +64,23 @@ public class User {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /**
+     * Returns a string representation of the user object.
+     *
+     * @return A formatted string containing user details.
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "User { " +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", photo='" + photo + '\'' +
+                ", points=" + points +
+                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                " }";
     }
 
     /**
