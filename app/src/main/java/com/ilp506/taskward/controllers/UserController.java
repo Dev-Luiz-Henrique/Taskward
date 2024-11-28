@@ -127,7 +127,11 @@ public class UserController {
             userRepository.deleteUser(userId);
 
             return OperationResponse.success("User deleted successfully");
-        } catch (DatabaseOperationException e) {
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid user ID provided");
+        }
+        catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while deleting user from the database");
         } catch (Exception e) {

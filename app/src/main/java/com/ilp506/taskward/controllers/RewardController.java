@@ -151,7 +151,11 @@ public class RewardController {
             rewardRepository.deleteReward(rewardId);
 
             return OperationResponse.success("Reward deleted successfully");
-        } catch (DatabaseOperationException e) {
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid reward ID provided");
+        }
+        catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while deleting reward from the database");
         } catch (Exception e) {
