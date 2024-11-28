@@ -68,6 +68,7 @@ public class User {
 
     /**
      * Returns a string representation of the user object.
+     * This method includes key attributes such as user ID, name, photo, points, and creation timestamp.
      *
      * @return A formatted string containing user details.
      */
@@ -76,8 +77,8 @@ public class User {
     public String toString() {
         return "User { " +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", photo='" + photo + '\'' +
+                ", name=" + name +
+                ", photo=" + photo +
                 ", points=" + points +
                 ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
                 " }";

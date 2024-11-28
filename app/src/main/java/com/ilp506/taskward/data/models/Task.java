@@ -1,9 +1,18 @@
 package com.ilp506.taskward.data.models;
 
+import androidx.annotation.NonNull;
+
 import com.ilp506.taskward.data.enums.TaskFrequencyEnum;
+import com.ilp506.taskward.utils.DateUtils;
 
 import java.sql.Timestamp;
 
+/**
+ * Represents a task in the system.
+ * This class encapsulates the properties and behaviors of a task entity.
+ * It includes fields for the task's ID, icon, title, description, frequency, frequency interval,
+ * start date, end date, points reward, and creation timestamp.
+ */
 public class Task {
     private int id;
     private String icon;
@@ -16,6 +25,9 @@ public class Task {
     private int pointsReward;
     private Timestamp createdAt;
 
+    /**
+     * Constructs a new Task object with the current timestamp as the creation time.
+     */
     public Task() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
         this.startDate = new Timestamp(System.currentTimeMillis());
@@ -101,6 +113,35 @@ public class Task {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Returns a string representation of the task object.
+     * This method includes key attributes such as task ID, icon, title, description, frequency,
+     * frequency interval, start date, end date, points reward, and creation timestamp.
+     *
+     * @return A formatted string containing task details.
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "Task { " +
+                "id=" + id +
+                ", icon=" + icon +
+                ", title=" + title +
+                ", description=" + description +
+                ", frequency=" + frequency.getValue() +
+                ", frequencyInterval=" + frequencyInterval +
+                ", startDate=" + DateUtils.formatTimestamp(startDate) +
+                ", endDate=" + DateUtils.formatTimestamp(endDate) +
+                ", pointsReward=" + pointsReward +
+                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                " }";
+    }
+
+    /**
+     * Validates the task's data to ensure all fields meet the requirements.
+     *
+     * @throws IllegalArgumentException If any validation rule is violated.
+     */
     public void validate() throws IllegalArgumentException {
         if (id < 0)
             throw new IllegalArgumentException("ID must be greater than or equal to 0.");

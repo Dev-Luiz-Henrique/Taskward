@@ -1,5 +1,9 @@
 package com.ilp506.taskward.data.models;
 
+import androidx.annotation.NonNull;
+
+import com.ilp506.taskward.utils.DateUtils;
+
 import java.sql.Timestamp;
 
 /**
@@ -86,6 +90,28 @@ public class Reward {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /**
+     * Returns a string representation of the reward object.
+     * This method includes key attributes such as reward ID, user ID, icon, title, description,
+     * points required, date redeemed, and creation timestamp.
+     *
+     * @return A formatted string containing reward details.
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "Reward { " +
+                "id=" + id +
+                ", userId=" + userId +
+                ", icon=" + icon +
+                ", title=" + title +
+                ", description=" + description +
+                ", pointsRequired=" + pointsRequired +
+                ", dateRedeemed=" + DateUtils.formatTimestamp(dateRedeemed) +
+                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                " }";
     }
 
     /**
