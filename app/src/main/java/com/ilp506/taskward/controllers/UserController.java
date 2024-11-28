@@ -17,6 +17,11 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructs a UserController with a UserRepository instance.
+     *
+     * @param context The application context used to initialize the UserRepository.
+     */
     public UserController(Context context) {
         this.userRepository = new UserRepository(context);
     }
@@ -30,7 +35,6 @@ public class UserController {
     private void validateUserId(int userId) {
         if (userId <= 0) throw new IllegalArgumentException("User ID must be greater than 0.");
     }
-
 
     /**
      * Creates a new user.

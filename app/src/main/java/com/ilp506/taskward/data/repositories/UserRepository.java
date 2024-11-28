@@ -15,6 +15,7 @@ import com.ilp506.taskward.utils.Logger;
 
 /**
  * Repository class responsible for managing database operations related to the User model.
+ * This class performs CRUD operations for the User model in the local SQLite database.
  */
 public class UserRepository {
 
@@ -23,6 +24,7 @@ public class UserRepository {
 
     /**
      * Constructs a UserRepository with a database helper instance.
+     * The database helper is responsible for managing database connections and operations.
      *
      * @param context The application context used to initialize the database helper.
      */
@@ -32,9 +34,12 @@ public class UserRepository {
 
     /**
      * Maps the data from a Cursor object to a User instance.
+     * This method retrieves data from the Cursor and converts it into a User object.
+     * It extracts the user details based on the column indices and handles potential exceptions.
      *
      * @param cursor The cursor containing the queried data.
      * @return A User instance populated with the cursor's data.
+     * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
      */
     protected User mapCursorToUser(Cursor cursor) {
         User user = new User();
@@ -55,9 +60,13 @@ public class UserRepository {
 
     /**
      * Creates a new user in the database.
+     * This method inserts a new user record into the database and retrieves the created User object.
+     * It throws an exception if the insert operation fails.
      *
      * @param user The User instance to be created.
      * @return The created User instance.
+     * @throws DatabaseOperationException If an error occurs during the database operation, such as an insertion failure.
+     * @throws RuntimeException If an error occurs during cursor mapping when retrieving the newly created user.
      */
     public User createUser(User user) {
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
@@ -81,9 +90,13 @@ public class UserRepository {
 
     /**
      * Retrieves a user from the database by their ID.
+     * This method queries the database for a single user based on their ID. If the user is found,
+     * it returns the corresponding User object. Otherwise, it logs a warning and returns null.
      *
      * @param userId The ID of the user to retrieve.
      * @return The User instance if found, or null if not found.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
+     * @throws RuntimeException If an error occurs while mapping the cursor data to the User object.
      */
     public User getUserById(int userId) {
         final String[] columns = UserTable.ALL_COLUMNS;
@@ -113,12 +126,15 @@ public class UserRepository {
         }
     }
 
-
     /**
      * Updates an existing user's details in the database.
+     * This method modifies an existing user record in the database using the provided User instance.
+     * It throws an exception if no rows were updated, meaning the user with the given ID was not found.
      *
      * @param user The User instance containing updated data.
      * @return The updated User instance.
+     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found.
+     * @throws RuntimeException If an error occurs while mapping the cursor data to the updated User object.
      */
     public User updateUser(User user) {
         final String selection = UserTable.COLUMN_ID + " = ?";
@@ -143,8 +159,11 @@ public class UserRepository {
 
     /**
      * Deletes a user from the database by their ID.
+     * This method performs a deletion operation based on the provided user ID.
+     * If the user does not exist or the deletion fails, an exception is thrown.
      *
      * @param userId The ID of the user to delete.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
      */
     public void deleteUser(int userId) {
         final String selection = UserTable.COLUMN_ID + " = ?";
@@ -161,10 +180,14 @@ public class UserRepository {
 
     /**
      * Updates the points of a user in the database.
+     * This method modifies the points value of an existing user record.
+     * It throws an exception if no rows were updated, meaning the user with the given ID was not found.
      *
      * @param userId The ID of the user to update.
      * @param points The new points value to set.
      * @return The updated User instance.
+     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found.
+     * @throws RuntimeException If an error occurs while mapping the cursor data to the updated User object.
      */
     public User updateUserPoints(int userId, int points) {
         final String selection = UserTable.COLUMN_ID + " = ?";
