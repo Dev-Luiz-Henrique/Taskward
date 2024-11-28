@@ -3,21 +3,20 @@ package com.ilp506.taskward.data.enums;
 import androidx.annotation.NonNull;
 
 /**
- * This enum represents the frequency of a task.
- * It has four possible values: DAILY, WEEKLY, MONTHLY, and YEARLY.
+ * This enum represents the status of a task event.
+ * It has three possible values: SCHEDULED, COMPLETED, and CANCELLED.
  */
-public enum TaskFrequencyEnum {
-    DAILY("daily"),
-    WEEKLY("weekly"),
-    MONTHLY("monthly"),
-    YEARLY("yearly");
+public enum TaskEventStatusEnum {
+    SCHEDULED("scheduled"),
+    COMPLETED("completed"),
+    CANCELLED("cancelled");
 
     private final String value;
 
     /**
      * Constructor to initialize the enum with a string value
      */
-    TaskFrequencyEnum(String value) {
+    TaskEventStatusEnum(String value) {
         this.value = value;
     }
 
@@ -32,7 +31,7 @@ public enum TaskFrequencyEnum {
      * Overriding the toString() method to return the string value of the enum.
      * This is used when printing or logging the enum instance.
      *
-     * @return The string value of the enum (e.g., "daily", "weekly", "monthly", "yearly").
+     * @return The string value of the enum (e.g., "scheduled", "completed", or "cancelled").
      */
     @NonNull
     @Override
@@ -41,18 +40,18 @@ public enum TaskFrequencyEnum {
     }
 
     /**
-     * Converts a string to its corresponding TaskFrequencyEnum constant.
-     * This method is useful when retrieving a frequency from the database (as a string)
+     * Converts a string to its corresponding TaskEventStatusEnum constant.
+     * This method is useful when retrieving a status from the database (as a string)
      * and converting it back into the appropriate enum constant.
      *
      * @param value The string value to be converted into an enum constant.
-     * @return The corresponding TaskFrequencyEnum constant (e.g., TaskFrequencyEnum.DAILY).
+     * @return The corresponding TaskEventStatusEnum constant (e.g., TaskEventStatusEnum.SCHEDULED).
      * @throws IllegalArgumentException if the provided string does not match any of the enum values.
      */
-    public static TaskFrequencyEnum fromString(String value) {
-        for (TaskFrequencyEnum frequency : TaskFrequencyEnum.values()) {
-            if (frequency.value.equalsIgnoreCase(value)) return frequency;
+    public static TaskEventStatusEnum fromString(String value) {
+        for (TaskEventStatusEnum status : TaskEventStatusEnum.values()) {
+            if (status.value.equalsIgnoreCase(value)) return status;
         }
-        throw new IllegalArgumentException("Unknown frequency: " + value);
+        throw new IllegalArgumentException("Unknown status: " + value);
     }
 }
