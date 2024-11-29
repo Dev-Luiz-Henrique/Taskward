@@ -1,0 +1,143 @@
+package com.ilp506.taskward.controllers;
+
+import android.content.Context;
+
+import com.ilp506.taskward.data.models.TaskEvent;
+import com.ilp506.taskward.data.repositories.TaskEventRepository;
+import com.ilp506.taskward.exceptions.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.utils.OperationResponse;
+
+import java.util.List;
+
+public class TaskEventController {
+    private final TaskEventRepository taskEventRepository;
+
+    /**
+     * Constructs a TaskEventController with a TaskEventRepository instance.
+     *
+     * @param context The application context used to initialize the TaskEventRepository.
+     */
+    public TaskEventController(Context context) {
+        this.taskEventRepository = new TaskEventRepository(context);
+    }
+
+    /**
+     * Creates a new task event.
+     *
+     * @param taskEvent The TaskEvent instance to be created.
+     * @return OperationResponse containing the created task event or failure message.
+     */
+    public OperationResponse<TaskEvent> createTaskEvent(TaskEvent taskEvent) {
+        try {
+            taskEvent.validate();
+
+            TaskEvent createdTaskEvent = taskEventRepository.createTaskEvent(taskEvent);
+            return OperationResponse.success("Task event created successfully", createdTaskEvent);
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid task event data provided");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while creating task event in the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while creating task event");
+        }
+    }
+
+    /**
+     * Retrieves all task events.
+     *
+     * @return OperationResponse containing the list of task events or failure message.
+     */
+    public OperationResponse<List<TaskEvent>> getAllTaskEvents() {
+        try {
+            List<TaskEvent> taskEvents = taskEventRepository.getAllTaskEvents();
+            if (taskEvents.isEmpty())
+                return OperationResponse.failure("No task events found.");
+
+            return OperationResponse.success("Task events retrieved successfully", taskEvents);
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task events from the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while retrieving task events");
+        }
+    }
+
+    /**
+     * Retrieves a task event by its ID.
+     *
+     * @param taskEventId The ID of the task event to retrieve.
+     * @return OperationResponse containing the task event or failure message.
+     */
+    public OperationResponse<TaskEvent> getTaskEventById(int taskEventId) {
+        try {
+            TaskEvent taskEvent = taskEventRepository.getTaskEventById(taskEventId);
+            if (taskEvent == null)
+                return OperationResponse.failure("Task event not found");
+
+            return OperationResponse.success("Task event retrieved successfully", taskEvent);
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task event from the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while retrieving task event");
+        }
+    }
+
+    /**
+     * Updates an existing task event.
+     *
+     * @param taskEvent The TaskEvent instance containing updated details.
+     * @return OperationResponse indicating success or failure.
+     */
+    public OperationResponse<TaskEvent> updateTaskEvent(TaskEvent taskEvent) {
+        try {
+            TaskEvent existingTaskEvent = taskEventRepository.getTaskEventById(taskEvent.getId());
+            if (existingTaskEvent == null)
+                return OperationResponse.failure("Task event not found");
+
+            taskEvent.validate();
+
+            TaskEvent updatedTaskEvent = taskEventRepository.updateTaskEvent(taskEvent);
+            return OperationResponse.success("Task event updated successfully", updatedTaskEvent);
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid task event data provided");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while updating task event in the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while updating task event");
+        }
+    }
+
+    /**
+     * Deletes a task event by its ID.
+     *
+     * @param taskEventId The ID of the task event to delete.
+     * @return OperationResponse indicating success or failure.
+     */
+    public OperationResponse<Void> deleteTaskEvent(int taskEventId) {
+        try {
+            TaskEvent existingTaskEvent = taskEventRepository.getTaskEventById(taskEventId);
+            if (existingTaskEvent == null)
+                return OperationResponse.failure("Task event not found");
+
+            taskEventRepository.deleteTaskEvent(taskEventId);
+
+            return OperationResponse.success("Task event deleted successfully");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while deleting task event from the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while deleting task event");
+        }
+    }
+}
