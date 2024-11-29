@@ -54,6 +54,9 @@ public class UserController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while creating user in the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while creating user");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while creating user");
@@ -76,6 +79,9 @@ public class UserController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving user from the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving user");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving user");
@@ -105,6 +111,9 @@ public class UserController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while updating user in the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while updating user");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while updating user");
@@ -157,7 +166,7 @@ public class UserController {
             existingUser.setPoints(points);
             existingUser.validate();
 
-            User updatedUser = userRepository.updateUserPoints(userId, points);
+            User updatedUser = userRepository.updateUser(existingUser);
             return OperationResponse.success("User points updated successfully", updatedUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);

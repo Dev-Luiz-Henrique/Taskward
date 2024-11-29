@@ -64,6 +64,9 @@ public class TaskController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while creating task in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while creating task");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while creating task");
@@ -85,6 +88,9 @@ public class TaskController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving tasks from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving tasks");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving tasks");
@@ -111,6 +117,9 @@ public class TaskController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving task from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving task");
@@ -140,6 +149,9 @@ public class TaskController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while updating task in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while updating task");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while updating task");
@@ -173,6 +185,4 @@ public class TaskController {
             return OperationResponse.failure("Unexpected error occurred while deleting task");
         }
     }
-
-
 }

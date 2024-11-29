@@ -55,6 +55,9 @@ public class RewardController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while creating reward in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while creating reward");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while creating reward");
@@ -76,12 +79,14 @@ public class RewardController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving rewards from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving rewards");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving rewards");
         }
     }
-
 
     /**
      * Retrieves a reward by its ID.
@@ -100,6 +105,9 @@ public class RewardController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving reward from the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving reward");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving reward");
@@ -129,6 +137,9 @@ public class RewardController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while updating reward in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while updating reward");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while updating reward");
@@ -154,10 +165,12 @@ public class RewardController {
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid reward ID provided");
-        }
-        catch (DatabaseOperationException e) {
+        } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while deleting reward from the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while deleting reward");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while deleting reward");

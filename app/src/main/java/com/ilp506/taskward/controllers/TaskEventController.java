@@ -30,7 +30,7 @@ public class TaskEventController {
     }
 
     /**
-     * Creates a new task event.
+     * Creates a new task event and schedules the next event if applicable.
      *
      * @param taskEvent The TaskEvent instance to be created.
      * @return OperationResponse containing the created task event or failure message.
@@ -47,6 +47,9 @@ public class TaskEventController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while creating task event in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while creating task event");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while creating task event");
@@ -68,6 +71,9 @@ public class TaskEventController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving task events from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task events");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving task events");
@@ -90,6 +96,9 @@ public class TaskEventController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while retrieving task event from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task event");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while retrieving task event");
@@ -118,6 +127,9 @@ public class TaskEventController {
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while updating task event in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while updating task event");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while updating task event");
@@ -168,12 +180,16 @@ public class TaskEventController {
             if (task != null) {
                 TaskEvent nextEvent = TaskScheduler.generateNextTaskEvent(task, event);
                 if (nextEvent != null) taskEventRepository.createTaskEvent(nextEvent);
+                // TODO implement logic for completed Task
             }
 
             return OperationResponse.success("Task event completed successfully");
         } catch (DatabaseOperationException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while completing task event in the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while completing task event");
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while completing task event");
@@ -200,6 +216,7 @@ public class TaskEventController {
                     if (task != null) {
                         TaskEvent nextEvent = TaskScheduler.generateNextTaskEvent(task, event);
                         if (nextEvent != null) taskEventRepository.createTaskEvent(nextEvent);
+                        // TODO implement logic for completed Task
                     }
                 }
             }
