@@ -13,7 +13,7 @@ public class TaskScheduler {
     /**
      * Generates the next scheduled task event for a given task and its last event.
      *
-     * @param task      The task to generate the next event for.
+     * @param task The task to generate the next event for.
      * @param lastEvent The last scheduled event (can be null if no previous event exists).
      * @return TaskEvent The next scheduled task event or null if the task's end date is exceeded.
      */
@@ -54,6 +54,8 @@ public class TaskScheduler {
 
         TaskEvent newEvent = new TaskEvent();
         newEvent.setTaskId(task.getId());
+        newEvent.setUserId(1); // TODO Replace with actual user ID
+        newEvent.setPointsEarned(task.getPointsReward());
         newEvent.setScheduledDate(new Timestamp(nextDate.getTime()));
         newEvent.setStatus(TaskEventStatusEnum.SCHEDULED);
         return newEvent;

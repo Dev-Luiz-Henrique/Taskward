@@ -179,34 +179,4 @@ public class UserRepository {
             throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
-
-    /**
-     * Updates the points of a user in the database.
-     * This method modifies the points value of an existing user record.
-     * It throws an exception if no rows were updated, meaning the user with the given ID was not found.
-     *
-     * @param userId The ID of the user to update.
-     * @param points The new points value to set.
-     * @return The updated User instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found.
-     * @throws RuntimeException If an error occurs while mapping the cursor data to the updated User object.
-     */
-    public User updateUserPoints(int userId, int points) {
-        final String selection = UserTable.COLUMN_ID + " = ?";
-        final String[] selectionArgs = {String.valueOf(userId)};
-
-        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put(UserTable.COLUMN_POINTS, points);
-
-            int rowsUpdated = db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
-            if (rowsUpdated == 0)
-                throw new DatabaseOperationException("No rows updated. User not found.");
-
-            return getUserById(userId);
-        } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during updateUserPoints: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
-        }
-    }
 }

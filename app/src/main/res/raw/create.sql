@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   title TEXT NOT NULL,
   description TEXT,
   frequency TEXT CHECK(frequency IN ('daily', 'weekly', 'monthly', 'yearly')) NOT NULL,
-  frequency_interval INTEGER DEFAULT 0 CHECK (frequency_interval >= 0),
+  frequency_interval INTEGER DEFAULT 1 CHECK (frequency_interval >= 1),
   start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   end_date TIMESTAMP,
   points_reward INTEGER DEFAULT 0 CHECK (points_reward >= 0),
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS task_events (
   scheduled_date TIMESTAMP,
   completed_date TIMESTAMP,
   points_earned INTEGER DEFAULT 0 CHECK (points_earned >= 0),
-  status TEXT CHECK(status IN ('scheduled', 'completed', 'cancelled')) DEFAULT 'scheduled',
+  status TEXT CHECK(status IN ('scheduled', 'completed', 'cancelled', 'expired')) DEFAULT 'scheduled',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (task_id) REFERENCES tasks(id)

@@ -5,8 +5,10 @@ import android.content.Context;
 import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
 import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
+import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.TaskEventRepository;
 import com.ilp506.taskward.data.repositories.TaskRepository;
+import com.ilp506.taskward.data.repositories.UserRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
@@ -18,6 +20,7 @@ import java.util.List;
 public class TaskEventController {
     private final TaskEventRepository taskEventRepository;
     private final TaskRepository taskRepository;
+    private final UserRepository  userRepository;
 
     /**
      * Constructs a TaskEventController with a TaskEventRepository instance.
@@ -27,6 +30,7 @@ public class TaskEventController {
     public TaskEventController(Context context) {
         this.taskEventRepository = new TaskEventRepository(context);
         this.taskRepository = new TaskRepository(context);
+        this.userRepository = new UserRepository(context);
     }
 
     /**
@@ -175,6 +179,12 @@ public class TaskEventController {
             event.setStatus(TaskEventStatusEnum.COMPLETED);
             event.setCompletedDate(new Timestamp(System.currentTimeMillis()));
             taskEventRepository.updateTaskEvent(event);
+
+            User user = userRepository.getUserById(event.getUserId());
+            if (user != null) {
+                user.setPoints(user.getPoints() + event.getPointsEarned());
+                userRepository.updateUser(user);
+            }
 
             Task task = taskRepository.getTaskById(event.getTaskId());
             if (task != null) {

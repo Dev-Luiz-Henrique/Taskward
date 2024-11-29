@@ -148,35 +148,4 @@ public class UserController {
             return OperationResponse.failure("Unexpected error occurred while deleting user");
         }
     }
-
-    /**
-     * Updates the points of a user.
-     *
-     * @param userId ID of the user to update.
-     * @param points New points value.
-     * @return OperationResponse indicating success or failure.
-     */
-    public OperationResponse<User> updateUserPoints(int userId, int points) {
-        try {
-            validateUserId(userId);
-            User existingUser = userRepository.getUserById(userId);
-            if (existingUser == null)
-                return OperationResponse.failure("User not found");
-
-            existingUser.setPoints(points);
-            existingUser.validate();
-
-            User updatedUser = userRepository.updateUser(existingUser);
-            return OperationResponse.success("User points updated successfully", updatedUser);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid user data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating user points in the database");
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while updating user points");
-        }
-    }
 }

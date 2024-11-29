@@ -132,19 +132,4 @@ public class UserRepositoryTest {
 
         userRepository.createUser(user);
     }
-
-    @Test
-    public void updateUserPoints_whenPointsAreValid_shouldUpdatePointsInDatabase() {
-        userRepository.updateUserPoints(1, 500);
-
-        ContentValues values = new ContentValues();
-        values.put(UserTable.COLUMN_POINTS, 500);
-
-        verify(mockDatabase).update(
-                eq(UserTable.TABLE_NAME),
-                eq(values),
-                eq(UserTable.COLUMN_ID + " = ?"),
-                eq(new String[]{"1"})
-        );
-    }
 }
