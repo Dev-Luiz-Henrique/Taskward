@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 public enum TaskEventStatusEnum {
     SCHEDULED("scheduled"),
     COMPLETED("completed"),
-    CANCELLED("cancelled");
+    CANCELLED("cancelled"),
+    EXPIRED("expired");
 
     private final String value;
 

@@ -3,10 +3,13 @@ package com.ilp506.taskward.controllers;
 import android.content.Context;
 
 import com.ilp506.taskward.data.models.Task;
+import com.ilp506.taskward.data.models.TaskEvent;
+import com.ilp506.taskward.data.repositories.TaskEventRepository;
 import com.ilp506.taskward.data.repositories.TaskRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
+import com.ilp506.taskward.utils.TaskScheduler;
 
 import java.util.List;
 
@@ -17,6 +20,7 @@ import java.util.List;
  */
 public class TaskController {
     private final TaskRepository taskRepository;
+    private final TaskEventRepository taskEventRepository;
 
     /**
      * Constructs a TaskController with a TaskRepository instance.
@@ -25,6 +29,7 @@ public class TaskController {
      */
     public TaskController(Context context) {
         this.taskRepository = new TaskRepository(context);
+        this.taskEventRepository = new TaskEventRepository(context);
     }
 
     /**
@@ -48,7 +53,11 @@ public class TaskController {
             task.validate();
 
             Task createdTask = taskRepository.createTask(task);
-            return OperationResponse.success("Task created successfully", createdTask);
+            TaskEvent firstEvent = TaskScheduler.generateNextTaskEvent(createdTask, null);
+            if (firstEvent != null)
+                taskEventRepository.createTaskEvent(firstEvent);
+
+            return OperationResponse.success("Task and initial event created successfully", createdTask);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Invalid task data provided");
@@ -164,4 +173,6 @@ public class TaskController {
             return OperationResponse.failure("Unexpected error occurred while deleting task");
         }
     }
+
+
 }

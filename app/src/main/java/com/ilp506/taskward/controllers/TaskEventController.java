@@ -2,16 +2,22 @@ package com.ilp506.taskward.controllers;
 
 import android.content.Context;
 
+import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
+import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
 import com.ilp506.taskward.data.repositories.TaskEventRepository;
+import com.ilp506.taskward.data.repositories.TaskRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
+import com.ilp506.taskward.utils.TaskScheduler;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class TaskEventController {
     private final TaskEventRepository taskEventRepository;
+    private final TaskRepository taskRepository;
 
     /**
      * Constructs a TaskEventController with a TaskEventRepository instance.
@@ -20,6 +26,7 @@ public class TaskEventController {
      */
     public TaskEventController(Context context) {
         this.taskEventRepository = new TaskEventRepository(context);
+        this.taskRepository = new TaskRepository(context);
     }
 
     /**
@@ -138,6 +145,72 @@ public class TaskEventController {
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while deleting task event");
+        }
+    }
+
+    /**
+     * Completes a TaskEvent and generates the next instance, if applicable.
+     *
+     * @param taskEventId The ID of the TaskEvent to complete.
+     * @return OperationResponse indicating success or failure.
+     */
+    public OperationResponse<Void> completeTaskEvent(int taskEventId) {
+        try {
+            TaskEvent event = taskEventRepository.getTaskEventById(taskEventId);
+            if (event == null)
+                return OperationResponse.failure("Task event not found");
+
+            event.setStatus(TaskEventStatusEnum.COMPLETED);
+            event.setCompletedDate(new Timestamp(System.currentTimeMillis()));
+            taskEventRepository.updateTaskEvent(event);
+
+            Task task = taskRepository.getTaskById(event.getTaskId());
+            if (task != null) {
+                TaskEvent nextEvent = TaskScheduler.generateNextTaskEvent(task, event);
+                if (nextEvent != null) taskEventRepository.createTaskEvent(nextEvent);
+            }
+
+            return OperationResponse.success("Task event completed successfully");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while completing task event in the database");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while completing task event");
+        }
+    }
+
+    /**
+     * Checks and processes expired TaskEvents, generating the next instances if necessary.
+     *
+     * @return OperationResponse indicating the result of the operation.
+     */
+    public OperationResponse<Void> checkAndGenerateExpiredEvents() {
+        try {
+            List<TaskEvent> pendingEvents = taskEventRepository.getAllTaskEvents();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+
+            for (TaskEvent event : pendingEvents) {
+                if (event.getScheduledDate().before(now) && event.getStatus() == TaskEventStatusEnum.SCHEDULED) {
+
+                    event.setStatus(TaskEventStatusEnum.EXPIRED);
+                    taskEventRepository.updateTaskEvent(event);
+
+                    Task task = taskRepository.getTaskById(event.getTaskId());
+                    if (task != null) {
+                        TaskEvent nextEvent = TaskScheduler.generateNextTaskEvent(task, event);
+                        if (nextEvent != null) taskEventRepository.createTaskEvent(nextEvent);
+                    }
+                }
+            }
+
+            return OperationResponse.success("Expired events processed successfully");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while processing expired task events");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while processing expired task events");
         }
     }
 }
