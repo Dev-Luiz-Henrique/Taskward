@@ -1,4 +1,4 @@
-package com.ilp506.taskward;
+package com.ilp506.taskward.ui.fragments;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.ilp506.taskward.R;
 
 /**
  * A simple {@link Fragment} subclass.
