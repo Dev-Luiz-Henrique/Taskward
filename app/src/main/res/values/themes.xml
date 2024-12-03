@@ -19,8 +19,10 @@
     </style>
 
     <style name="CustomBottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">40dp</item>
         <item name="itemTextColor">?attr/colorOnPrimary</item>
         <item name="itemIconTint">@null</item>
         <item name="backgroundTint">?attr/colorPrimary</item>
     </style>
+
 </resources>

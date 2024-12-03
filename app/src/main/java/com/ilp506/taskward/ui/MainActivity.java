@@ -13,8 +13,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.utils.BottomNavUtils;
 
-import java.util.Objects;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
