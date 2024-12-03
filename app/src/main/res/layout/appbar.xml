@@ -1,0 +1,42 @@
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/CustomToolbarStyle">
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="16dp"
+        android:gravity="center_vertical|start"
+        android:text="tasks"
+        style="@style/ToolbarTitleTextStyle" />
+
+    <LinearLayout
+        android:id="@+id/toolbar_points_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_vertical"
+        style="@style/ToolbarPointsContainerStyle">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            style="@style/ToolbarIconStyle" />
+
+        <TextView
+            android:id="@+id/toolbar_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="175"
+            style="@style/ToolbarPointsTextStyle" />
+    </LinearLayout>
+
+</androidx.appcompat.widget.Toolbar>

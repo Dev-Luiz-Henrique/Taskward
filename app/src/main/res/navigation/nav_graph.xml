@@ -4,14 +4,17 @@
     app:startDestination="@id/tasksFragment">
 
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.ilp506.taskward.ui.fragments.ProfileFragment" />
+        android:id="@+id/tasksFragment"
+        android:name="com.ilp506.taskward.ui.fragments.TasksFragment"
+        android:label="Tasks" />
 
     <fragment
         android:id="@+id/rewardsFragment"
-        android:name="com.ilp506.taskward.ui.fragments.RewardsFragment" />
+        android:name="com.ilp506.taskward.ui.fragments.RewardsFragment"
+        android:label="Rewards" />
 
     <fragment
-        android:id="@+id/tasksFragment"
-        android:name="com.ilp506.taskward.ui.fragments.TasksFragment" />
+        android:id="@+id/profileFragment"
+        android:name="com.ilp506.taskward.ui.fragments.ProfileFragment"
+        android:label="Profile" />
 </navigation>
