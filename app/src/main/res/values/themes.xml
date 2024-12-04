@@ -1,20 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.Taskward" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color -->
         <item name="colorPrimary">@color/gray_500</item>
         <item name="colorPrimaryVariant">@color/gray_500_50</item>
         <item name="colorOnPrimary">@color/white_100</item>
 
-        <!-- Secondary brand color -->
         <item name="colorSecondary">@color/pink_500</item>
         <item name="colorSecondaryVariant">@color/pink_500_50</item>
         <item name="colorOnSecondary">@color/white_100</item>
 
-        <!-- Status bar color -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
-        <!-- BottomNavigation customization -->
         <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
     </style>
 
@@ -26,10 +21,9 @@
     </style>
 
     <style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
-        <item name="background">?attr/colorOnPrimary</item>
+        <item name="android:background">?attr/colorOnPrimary</item>
         <item name="titleTextColor">?attr/colorPrimary</item>
         <item name="subtitleTextColor">?attr/colorPrimary</item>
-        <item name="android:elevation">4dp</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
     </style>

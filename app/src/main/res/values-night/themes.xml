@@ -1,16 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Taskward" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
+    <style name="Theme.Taskward" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
         <item name="colorPrimary">@color/gray_500</item>
         <item name="colorPrimaryVariant">@color/gray_500_50</item>
         <item name="colorOnPrimary">@color/white_100</item>
-        <!-- Secondary brand color -->
+
         <item name="colorSecondary">@color/pink_500</item>
         <item name="colorSecondaryVariant">@color/pink_500_50</item>
         <item name="colorOnSecondary">@color/white_100</item>
-        <!-- Status bar color. -->
+
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
     </style>
 </resources>
