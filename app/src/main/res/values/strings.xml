@@ -5,4 +5,8 @@
     <string name="menu_botton_bar_task">Hello blank fragment</string>
     <string name="menu_botton_bar_reward">Hello blank fragment</string>
     <string name="menu_botton_bar_profile">Hello blank fragment</string>
+
+    <string name="tasks_title">tasks</string>
+    <string name="rewards_title">rewards</string>
+    <string name="profile_title">profile</string>
 </resources>

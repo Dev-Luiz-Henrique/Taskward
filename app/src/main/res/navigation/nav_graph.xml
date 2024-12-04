@@ -6,15 +6,16 @@
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.ilp506.taskward.ui.fragments.TasksFragment"
-        android:label="Tasks" />
+        android:label="@string/tasks_title" />
 
     <fragment
         android:id="@+id/rewardsFragment"
         android:name="com.ilp506.taskward.ui.fragments.RewardsFragment"
-        android:label="Rewards" />
+        android:label="@string/rewards_title" />
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ilp506.taskward.ui.fragments.ProfileFragment"
-        android:label="Profile" />
+        android:label="@string/profile_title" />
+
 </navigation>

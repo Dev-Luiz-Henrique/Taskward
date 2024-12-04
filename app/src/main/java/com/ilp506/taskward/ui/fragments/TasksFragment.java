@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 
 import com.ilp506.taskward.R;
 
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link TasksFragment#newInstance} factory method to
@@ -67,14 +69,6 @@ public class TasksFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.custom_toolbar);
-        if (getActivity() instanceof AppCompatActivity) {
-            AppCompatActivity activity = (AppCompatActivity) getActivity();
-            activity.setSupportActionBar(toolbar);
-            //activity.getSupportActionBar().setTitle("Tasks");
-        }
-
         return view;
     }
-
 }
