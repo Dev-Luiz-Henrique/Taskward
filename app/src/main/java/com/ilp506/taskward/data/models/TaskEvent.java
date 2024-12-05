@@ -17,6 +17,8 @@ public class TaskEvent {
     private TaskEventStatusEnum status;
     private Timestamp createdAt;
 
+    private String title;
+
     /**
      * Constructs a new TaskEvent object with the current timestamp as the creation time.
      * The status is set to SCHEDULED by default.
@@ -88,6 +90,14 @@ public class TaskEvent {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**

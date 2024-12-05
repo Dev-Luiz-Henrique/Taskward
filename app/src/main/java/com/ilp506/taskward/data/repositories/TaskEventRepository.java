@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.ilp506.taskward.data.DatabaseContract.TaskEventTable;
+import com.ilp506.taskward.data.DatabaseContract.TaskTable;
 import com.ilp506.taskward.data.DatabaseHelper;
 import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
 import com.ilp506.taskward.data.models.TaskEvent;
@@ -65,6 +66,9 @@ public class TaskEventRepository {
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_CREATED_AT)))
             );
 
+            int titleIndex = cursor.getColumnIndex(TaskTable.COLUMN_TITLE);
+            if (titleIndex != -1) taskEvent.setTitle(cursor.getString(titleIndex));
+
         } catch (Exception e){
             Logger.e(TAG, "Error mapping cursor to TaskEvent: " + e.getMessage(), e);
             throw new RuntimeException("Error mapping cursor to TaskEvent: " + e.getMessage(), e);
@@ -117,11 +121,24 @@ public class TaskEventRepository {
      */
     public List<TaskEvent> getAllTaskEvents(){
         List<TaskEvent> taskEvents = new ArrayList<>();
-        final String[] columns = TaskEventTable.ALL_COLUMNS;
+        final String table = String.format(
+                "%s LEFT JOIN %s ON %s.%s = %s.%s",
+                TaskEventTable.TABLE_NAME,
+                TaskTable.TABLE_NAME,
+                TaskEventTable.TABLE_NAME,
+                TaskEventTable.COLUMN_TASK_ID,
+                TaskTable.TABLE_NAME,
+                TaskTable.COLUMN_ID
+        );
+
+        final String[] columns = {
+                TaskEventTable.TABLE_NAME + ".*",
+                TaskTable.TABLE_NAME + "." + TaskTable.COLUMN_TITLE
+        };
 
         try(SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.query(
-                    TaskEventTable.TABLE_NAME,
+                    table,
                     columns,
                     null,
                     null,

@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
