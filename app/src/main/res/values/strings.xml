@@ -9,4 +9,6 @@
     <string name="tasks_title">tasks</string>
     <string name="rewards_title">rewards</string>
     <string name="profile_title">profile</string>
+
+    <string name="points_earned">+%1$d</string>
 </resources>

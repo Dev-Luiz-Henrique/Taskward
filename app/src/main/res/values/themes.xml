@@ -12,47 +12,4 @@
 
         <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
     </style>
-
-    <style name="CustomBottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="itemIconSize">40dp</item>
-        <item name="itemTextColor">?attr/colorOnPrimary</item>
-        <item name="itemIconTint">@null</item>
-        <item name="backgroundTint">?attr/colorPrimary</item>
-    </style>
-
-    <style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
-        <item name="android:background">?attr/colorOnPrimary</item>
-        <item name="titleTextColor">?attr/colorPrimary</item>
-        <item name="subtitleTextColor">?attr/colorPrimary</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-    </style>
-
-    <style name="ToolbarTitleTextStyle">
-        <item name="android:textColor">?attr/colorPrimary</item>
-        <item name="android:textSize">64sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:fontFamily">@font/belanosima_regular</item>
-    </style>
-
-    <style name="ToolbarPointsContainerStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:background">@drawable/bg_container_points</item>
-        <item name="android:elevation">2dp</item>
-    </style>
-
-    <style name="ToolbarPointsTextStyle">
-        <item name="android:textColor">@color/yellow_500</item>
-        <item name="android:textSize">32sp</item>
-        <item name="android:fontFamily">@font/belanosima_regular</item>
-    </style>
-
-    <style name="ToolbarIconStyle">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:src">@drawable/ic_star</item>
-        <item name="android:tint">@color/yellow_500</item>
-    </style>
 </resources>

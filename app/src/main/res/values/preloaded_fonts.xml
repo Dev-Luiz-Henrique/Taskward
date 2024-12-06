@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+
         <item>@font/belanosima_regular</item>
-        <item>@font/belanosima_bold</item>
         <item>@font/belanosima_semibold</item>
-        <item>@font/outfit</item>
+        <item>@font/belanosima_bold</item>
+
+        <item>@font/outfit_regular</item>
+        <item>@font/outfit_semibold</item>
         <item>@font/outfit_bold</item>
+
         <item>@font/readex_pro</item>
         <item>@font/readex_pro_bold</item>
     </array>

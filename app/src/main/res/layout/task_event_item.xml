@@ -1,14 +1,20 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="12dp"
+    android:gravity="center_vertical">
 
     <CheckBox
         android:id="@+id/taskCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:buttonTint="@color/gray_500"
+        android:button="@drawable/custom_checkbox" />
 
     <TextView
         android:id="@+id/taskEventTitle"
@@ -17,14 +23,28 @@
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Task Name"
-        android:textSize="16sp"
-        android:layout_marginStart="8dp"/>
+        android:textSize="18sp"
+        android:textColor="@color/gray_500"
+        android:fontFamily="@font/outfit_regular"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/taskEventPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="+10"
-        android:layout_marginStart="8dp" />
+        android:textSize="20sp"
+        android:textColor="@color/pink_500"
+        android:fontFamily="@font/outfit_semibold"
+        android:layout_marginEnd="8dp" />
+
+    <ImageView
+        android:id="@+id/taskEventStar"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_star"
+        app:tint="@color/pink_500" />
+
 </LinearLayout>

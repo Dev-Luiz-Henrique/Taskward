@@ -137,4 +137,13 @@ public class TaskEvent {
         if (pointsEarned < 0)
             throw new IllegalArgumentException("Points earned must be greater than or equal to 0.");
     }
+
+    /**
+     * Checks if the task event is completed.
+     *
+     * @return True if the task event is completed, false otherwise.
+     */
+    public boolean isCompleted() {
+        return status == TaskEventStatusEnum.COMPLETED;
+    }
 }
