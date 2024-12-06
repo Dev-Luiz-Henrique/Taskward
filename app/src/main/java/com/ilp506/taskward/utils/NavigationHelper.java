@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -23,8 +25,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Helper class for managing navigation-related functionality, including
- * NavController setup, BottomNavigationView configuration, and toolbar updates.
+ * A helper class for managing navigation-related functionality in the app.
+ * It handles setting up the navigation controller, bottom navigation, and toolbar customization.
+ * This class also updates the navigation bar and toolbar dynamically based on the active fragment.
+ * Implements the LifecycleObserver interface to manage NavController lifecycle events.
  */
 public class NavigationHelper implements LifecycleObserver {
     private static final String TAG = NavigationHelper.class.getSimpleName();
@@ -32,8 +36,11 @@ public class NavigationHelper implements LifecycleObserver {
     private final AppCompatActivity activity;
     private final NavController navController;
 
+    private final MutableLiveData<Integer> pointsLiveData = new MutableLiveData<>();
+
     /**
-     * Initializes the NavigationHelper with the NavController derived from the NavHostFragment.
+     * Constructs a NavigationHelper for managing navigation tasks in the specified activity.
+     * It attempts to retrieve the NavController from the NavHostFragment and initializes navigation.
      *
      * @param activity The calling AppCompatActivity containing the NavHostFragment.
      * @throws NavigationHelperException If the NavHostFragment is not found.
@@ -60,11 +67,31 @@ public class NavigationHelper implements LifecycleObserver {
     }
 
     /**
-     * Configures the BottomNavigationView, linking it to the NavController and
-     * customizing item icons and colors.
+     * Returns a LiveData object that observes changes to the user's points.
+     * This LiveData is used to update the UI when the user's points value changes.
+     *
+     * @return LiveData object for observing points changes.
+     */
+    public LiveData<Integer> getPointsLiveData() {
+        return pointsLiveData;
+    }
+
+    /**
+     * Updates the points value stored in LiveData.
+     * This method will notify observers about the new points value.
+     *
+     * @param points The new points value to be updated.
+     */
+    public void updatePoints(int points) {
+        pointsLiveData.setValue(points);
+    }
+
+    /**
+     * Configures the BottomNavigationView to work with the NavController.
+     * It also customizes the item icons and their respective tint colors.
      *
      * @param bottomNavigationView The BottomNavigationView instance to configure.
-     * @throws NavigationHelperException If configuration fails.
+     * @throws NavigationHelperException If there is an error during configuration.
      */
     public void setupBottomNavigationView(@NonNull BottomNavigationView bottomNavigationView) {
         try {
@@ -85,9 +112,10 @@ public class NavigationHelper implements LifecycleObserver {
     }
 
     /**
-     * Configures the Toolbar by updating the title dynamically based on the current fragment in the navigation.
+     * Configures the Toolbar dynamically based on the active fragment's navigation destination.
+     * It updates the toolbar's title according to the current fragment.
      *
-     * @param toolbar The Toolbar to be updated with the current title.
+     * @param toolbar The Toolbar to be updated with the current fragment title.
      * @throws NavigationHelperException If the Toolbar cannot be configured.
      */
     public void setupToolbar(@NonNull Toolbar toolbar) {
@@ -114,13 +142,13 @@ public class NavigationHelper implements LifecycleObserver {
     }
 
     /**
-     * Helper method to configure icon and tint for a menu item in the BottomNavigationView.
+     * Helper method to configure the icon and color tint for a specific menu item in the BottomNavigationView.
      *
      * @param navView   The BottomNavigationView instance.
-     * @param itemId    The menu item ID.
-     * @param iconResId The resource ID of the icon.
-     * @param tintResId The resource ID of the color tint.
-     * @throws NavigationHelperException If menu item configuration fails.
+     * @param itemId    The ID of the menu item to configure.
+     * @param iconResId The resource ID of the icon for the menu item.
+     * @param tintResId The resource ID of the color tint for the icon.
+     * @throws NavigationHelperException If there is an error during the menu item configuration.
      */
     private void configureMenuItem(@NonNull BottomNavigationView navView,
                                    int itemId, int iconResId, int tintResId) {
