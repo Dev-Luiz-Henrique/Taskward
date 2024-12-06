@@ -5,9 +5,14 @@ import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Utility class for generating task event schedules.
+ */
 public class TaskScheduler {
 
     /**
@@ -25,39 +30,36 @@ public class TaskScheduler {
         if (task.getFrequency() == null)
             throw new IllegalArgumentException("Task must have a frequency");
 
-        Calendar calendar = Calendar.getInstance();
-        if (lastEvent != null)
-            calendar.setTime(lastEvent.getScheduledDate());
-        else
-            calendar.setTime(task.getStartDate());
+        LocalDateTime lastScheduledDate = lastEvent != null ? lastEvent.getScheduledDate() : task.getStartDate();
+        LocalDateTime nextScheduledDate;
 
         switch (task.getFrequency()) {
             case DAILY:
-                calendar.add(Calendar.DAY_OF_YEAR, task.getFrequencyInterval());
+                nextScheduledDate = lastScheduledDate.plusDays(task.getFrequencyInterval());
                 break;
             case WEEKLY:
-                calendar.add(Calendar.WEEK_OF_YEAR, task.getFrequencyInterval());
+                nextScheduledDate = lastScheduledDate.plusWeeks(task.getFrequencyInterval());
                 break;
             case MONTHLY:
-                calendar.add(Calendar.MONTH, task.getFrequencyInterval());
+                nextScheduledDate = lastScheduledDate.plusMonths(task.getFrequencyInterval());
                 break;
             case YEARLY:
-                calendar.add(Calendar.YEAR, task.getFrequencyInterval());
+                nextScheduledDate = lastScheduledDate.plusYears(task.getFrequencyInterval());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported frequency: " + task.getFrequency());
         }
 
-        Date nextDate = calendar.getTime();
-        if (task.getEndDate() != null && nextDate.after(task.getEndDate()))
+        if (task.getEndDate() != null && nextScheduledDate.isAfter(task.getEndDate()))
             return null;
 
         TaskEvent newEvent = new TaskEvent();
         newEvent.setTaskId(task.getId());
         newEvent.setUserId(1); // TODO Replace with actual user ID
         newEvent.setPointsEarned(task.getPointsReward());
-        newEvent.setScheduledDate(new Timestamp(nextDate.getTime()));
+        newEvent.setScheduledDate(nextScheduledDate);
         newEvent.setStatus(TaskEventStatusEnum.SCHEDULED);
+
         return newEvent;
     }
 }

@@ -53,10 +53,10 @@ public class RewardRepository {
             reward.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_TITLE)));
             reward.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_DESCRIPTION)));
             reward.setPointsRequired(cursor.getInt(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_POINTS_REQUIRED)));
-            reward.setDateRedeemed(DateUtils.parseTimestamp(
+            reward.setDateRedeemed(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_DATE_REDEEMED))
             ));
-            reward.setCreatedAt(DateUtils.parseTimestamp(
+            reward.setCreatedAt(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(RewardTable.COLUMN_CREATED_AT))
             ));
 

@@ -48,7 +48,7 @@ public class UserRepository {
             user.setName(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME)));
             user.setPhoto(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_PHOTO)));
             user.setPoints(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_POINTS)));
-            user.setCreatedAt(DateUtils.parseTimestamp(
+            user.setCreatedAt(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_CREATED_AT))
             ));
 

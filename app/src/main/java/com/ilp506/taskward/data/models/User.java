@@ -4,12 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.ilp506.taskward.utils.DateUtils;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Represents a user in the system.
  * This class encapsulates the properties and behaviors of a user entity.
- * It includes fields for the user's ID, name, photo, points, and creation timestamp.
  */
 public class User {
 
@@ -17,13 +16,13 @@ public class User {
     private String name;
     private String photo;
     private int points;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     /**
      * Constructs a new User object with the current timestamp as the creation time.
      */
     public User() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = LocalDateTime.now();
     }
 
     public int getId() {
@@ -58,11 +57,11 @@ public class User {
         this.points = points;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -77,10 +76,10 @@ public class User {
     public String toString() {
         return "User { " +
                 "id=" + id +
-                ", name=" + name +
-                ", photo=" + photo +
+                ", name='" + name +
+                ", photo='" + photo +
                 ", points=" + points +
-                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
     }
 

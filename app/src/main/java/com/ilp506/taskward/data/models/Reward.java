@@ -4,12 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.ilp506.taskward.utils.DateUtils;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Represents a reward in the system.
  * This class encapsulates the properties and behaviors of a reward entity.
- * It includes fields for the reward's ID, user ID, icon, title, description, points required, date redeemed, and creation timestamp.
  */
 public class Reward {
     private int id;
@@ -18,14 +17,14 @@ public class Reward {
     private String title;
     private String description;
     private int pointsRequired;
-    private Timestamp dateRedeemed;
-    private Timestamp createdAt;
+    private LocalDateTime dateRedeemed;
+    private LocalDateTime createdAt;
 
     /**
      * Constructs a new Reward object with the current timestamp as the creation time.
      */
     public Reward() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = LocalDateTime.now();
     }
 
     public int getId() {
@@ -76,28 +75,24 @@ public class Reward {
         this.pointsRequired = pointsRequired;
     }
 
-    public Timestamp getDateRedeemed() {
+    public LocalDateTime getDateRedeemed() {
         return dateRedeemed;
     }
 
-    public void setDateRedeemed(Timestamp dateRedeemed) {
+    public void setDateRedeemed(LocalDateTime dateRedeemed) {
         this.dateRedeemed = dateRedeemed;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
      * Returns a string representation of the reward object.
-     * This method includes key attributes such as reward ID, user ID, icon, title, description,
-     * points required, date redeemed, and creation timestamp.
-     *
-     * @return A formatted string containing reward details.
      */
     @NonNull
     @Override
@@ -105,12 +100,12 @@ public class Reward {
         return "Reward { " +
                 "id=" + id +
                 ", userId=" + userId +
-                ", icon=" + icon +
-                ", title=" + title +
-                ", description=" + description +
+                ", icon='" + icon +
+                ", title='" + title +
+                ", description='" + description +
                 ", pointsRequired=" + pointsRequired +
-                ", dateRedeemed=" + DateUtils.formatTimestamp(dateRedeemed) +
-                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                ", dateRedeemed=" + DateUtils.formatLocalDateTime(dateRedeemed) +
+                ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
     }
 
@@ -125,10 +120,10 @@ public class Reward {
         if (title == null || title.trim().isEmpty())
             throw new IllegalArgumentException("Title is required.");
         if (description != null && description.length() > 255)
-            throw new IllegalArgumentException("Description must be less than 255 characters");
+            throw new IllegalArgumentException("Description must be less than 255 characters.");
         if (pointsRequired <= 0)
-            throw new IllegalArgumentException("Points required must be greater than 0");
-        if (dateRedeemed != null && dateRedeemed.after(new Timestamp(System.currentTimeMillis())))
+            throw new IllegalArgumentException("Points required must be greater than 0.");
+        if (dateRedeemed != null && dateRedeemed.isAfter(LocalDateTime.now()))
             throw new IllegalArgumentException("Date redeemed must be in the present or the past if specified.");
     }
 }

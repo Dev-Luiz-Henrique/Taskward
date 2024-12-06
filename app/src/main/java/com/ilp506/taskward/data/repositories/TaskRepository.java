@@ -56,14 +56,14 @@ public class TaskRepository {
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_FREQUENCY)))
             );
             task.setFrequencyInterval(cursor.getInt(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_FREQUENCY_INTERVAL)));
-            task.setStartDate(DateUtils.parseTimestamp(
+            task.setStartDate(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_START_DATE)))
             );
-            task.setEndDate(DateUtils.parseTimestamp(
+            task.setEndDate(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_END_DATE)))
             );
             task.setPointsReward(cursor.getInt(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_POINTS_REWARD)));
-            task.setCreatedAt(DateUtils.parseTimestamp(
+            task.setCreatedAt(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_CREATED_AT)))
             );
 
@@ -93,8 +93,8 @@ public class TaskRepository {
             values.put(TaskTable.COLUMN_DESCRIPTION, task.getDescription());
             values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().getValue());
             values.put(TaskTable.COLUMN_FREQUENCY_INTERVAL, task.getFrequencyInterval());
-            values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatTimestamp(task.getStartDate()));
-            values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatTimestamp(task.getEndDate()));
+            values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatLocalDateTime(task.getStartDate()));
+            values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatLocalDateTime(task.getEndDate()));
             values.put(TaskTable.COLUMN_POINTS_REWARD, task.getPointsReward());
 
             long newId = db.insertOrThrow(TaskTable.TABLE_NAME, null, values);
@@ -206,10 +206,10 @@ public class TaskRepository {
             values.put(TaskTable.COLUMN_DESCRIPTION, task.getDescription());
             values.put(TaskTable.COLUMN_FREQUENCY, task.getFrequency().getValue());
             values.put(TaskTable.COLUMN_FREQUENCY_INTERVAL, task.getFrequencyInterval());
-            values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatTimestamp(task.getStartDate()));
-            values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatTimestamp(task.getEndDate()));
+            values.put(TaskTable.COLUMN_START_DATE, DateUtils.formatLocalDateTime(task.getStartDate()));
+            values.put(TaskTable.COLUMN_END_DATE, DateUtils.formatLocalDateTime(task.getEndDate()));
             values.put(TaskTable.COLUMN_POINTS_REWARD, task.getPointsReward());
-            values.put(TaskTable.COLUMN_CREATED_AT, DateUtils.formatTimestamp(task.getCreatedAt()));
+            values.put(TaskTable.COLUMN_CREATED_AT, DateUtils.formatLocalDateTime(task.getCreatedAt()));
 
             int rowsUpdated = db.update(TaskTable.TABLE_NAME, values, selection, selectionArgs);
             if (rowsUpdated == 0)

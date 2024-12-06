@@ -5,26 +5,32 @@ import androidx.annotation.NonNull;
 import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
 import com.ilp506.taskward.utils.DateUtils;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a task event in the application.
+ * This class encapsulates the properties and behavior of a task event entity.
+ */
 public class TaskEvent {
     private int id;
     private int userId;
     private int taskId;
-    private Timestamp scheduledDate;
-    private Timestamp completedDate;
+    private LocalDateTime scheduledDate;
+    private LocalDateTime completedDate;
     private int pointsEarned;
     private TaskEventStatusEnum status;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     private String title;
 
     /**
-     * Constructs a new TaskEvent object with the current timestamp as the creation time.
+     * Constructs a new TaskEvent object with the current time as the creation timestamp.
      * The status is set to SCHEDULED by default.
      */
     public TaskEvent() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = LocalDateTime.now();
         this.status = TaskEventStatusEnum.SCHEDULED;
     }
 
@@ -52,19 +58,19 @@ public class TaskEvent {
         this.taskId = taskId;
     }
 
-    public Timestamp getScheduledDate() {
+    public LocalDateTime getScheduledDate() {
         return scheduledDate;
     }
 
-    public void setScheduledDate(Timestamp scheduledDate) {
+    public void setScheduledDate(LocalDateTime scheduledDate) {
         this.scheduledDate = scheduledDate;
     }
 
-    public Timestamp getCompletedDate() {
+    public LocalDateTime getCompletedDate() {
         return completedDate;
     }
 
-    public void setCompletedDate(Timestamp completedDate) {
+    public void setCompletedDate(LocalDateTime completedDate) {
         this.completedDate = completedDate;
     }
 
@@ -84,11 +90,11 @@ public class TaskEvent {
         this.status = status;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -102,10 +108,6 @@ public class TaskEvent {
 
     /**
      * Returns a string representation of the TaskEvent object.
-     * This method includes key attributes such as task event ID, user ID, task ID, scheduled and completed dates,
-     * points earned, status, and creation timestamp.
-     *
-     * @return A formatted string containing task event details.
      */
     @NonNull
     @Override
@@ -114,18 +116,21 @@ public class TaskEvent {
                 "id=" + id +
                 ", userId=" + userId +
                 ", taskId=" + taskId +
-                ", scheduledDate=" + DateUtils.formatTimestamp(scheduledDate) +
-                ", completedDate=" + DateUtils.formatTimestamp(completedDate) +
+                ", scheduledDate=" + DateUtils.formatLocalDateTime(scheduledDate) +
+                ", completedDate=" + DateUtils.formatLocalDateTime(completedDate) +
                 ", pointsEarned=" + pointsEarned +
                 ", status=" + status.getValue() +
-                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
+    }
+
+
+    private String formatLocalDateTime(LocalDateTime dateTime, DateTimeFormatter formatter) {
+        return dateTime != null ? dateTime.format(formatter) : "null";
     }
 
     /**
      * Validates the task event's data to ensure all fields meet the requirements.
-     *
-     * @throws IllegalArgumentException If any validation rule is violated.
      */
     public void validate() throws IllegalArgumentException {
         if (scheduledDate == null)
@@ -140,8 +145,6 @@ public class TaskEvent {
 
     /**
      * Checks if the task event is completed.
-     *
-     * @return True if the task event is completed, false otherwise.
      */
     public boolean isCompleted() {
         return status == TaskEventStatusEnum.COMPLETED;

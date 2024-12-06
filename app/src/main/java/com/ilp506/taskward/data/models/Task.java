@@ -5,13 +5,11 @@ import androidx.annotation.NonNull;
 import com.ilp506.taskward.data.enums.TaskFrequencyEnum;
 import com.ilp506.taskward.utils.DateUtils;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Represents a task in the system.
  * This class encapsulates the properties and behaviors of a task entity.
- * It includes fields for the task's ID, icon, title, description, frequency, frequency interval,
- * start date, end date, points reward, and creation timestamp.
  */
 public class Task {
     private int id;
@@ -20,17 +18,17 @@ public class Task {
     private String description;
     private TaskFrequencyEnum frequency;
     private int frequencyInterval;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private int pointsReward;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     /**
-     * Constructs a new Task object with the current timestamp as the creation time.
+     * Constructs a new Task object with the current timestamp as the creation and start time.
      */
     public Task() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-        this.startDate = new Timestamp(System.currentTimeMillis());
+        this.createdAt = LocalDateTime.now();
+        this.startDate = LocalDateTime.now();
     }
 
     public int getId() {
@@ -81,19 +79,19 @@ public class Task {
         this.frequencyInterval = frequencyInterval;
     }
 
-    public Timestamp getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -105,35 +103,31 @@ public class Task {
         this.pointsReward = pointsReward;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
      * Returns a string representation of the task object.
-     * This method includes key attributes such as task ID, icon, title, description, frequency,
-     * frequency interval, start date, end date, points reward, and creation timestamp.
-     *
-     * @return A formatted string containing task details.
      */
     @NonNull
     @Override
     public String toString() {
         return "Task { " +
                 "id=" + id +
-                ", icon=" + icon +
-                ", title=" + title +
-                ", description=" + description +
-                ", frequency=" + frequency.getValue() +
+                ", icon='" + icon +
+                ", title='" + title +
+                ", description='" + description +
+                ", frequency=" + (frequency != null ? frequency.getValue() : "null") +
                 ", frequencyInterval=" + frequencyInterval +
-                ", startDate=" + DateUtils.formatTimestamp(startDate) +
-                ", endDate=" + DateUtils.formatTimestamp(endDate) +
+                ", startDate=" + DateUtils.formatLocalDateTime(startDate) +
+                ", endDate=" + DateUtils.formatLocalDateTime(endDate) +
                 ", pointsReward=" + pointsReward +
-                ", createdAt=" + DateUtils.formatTimestamp(createdAt) +
+                ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
     }
 
@@ -150,16 +144,16 @@ public class Task {
         if (title == null || title.trim().isEmpty())
             throw new IllegalArgumentException("Title is required.");
         if (description != null && description.length() > 255)
-            throw new IllegalArgumentException("Description must be less than 255 characters");
+            throw new IllegalArgumentException("Description must be less than 255 characters.");
         if (frequency == null)
             throw new IllegalArgumentException("Frequency is required.");
         if (frequencyInterval <= 0)
-            throw new IllegalArgumentException("Frequency interval must be greater than 0");
+            throw new IllegalArgumentException("Frequency interval must be greater than 0.");
         if (pointsReward < 0)
-            throw new IllegalArgumentException("Points reward must be greater than or equal to 0");
-        if (startDate.before(new Timestamp(System.currentTimeMillis())))
+            throw new IllegalArgumentException("Points reward must be greater than or equal to 0.");
+        if (startDate.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("Start date must be now or in the future.");
-        if (endDate != null && endDate.before(startDate))
+        if (endDate != null && endDate.isBefore(startDate))
             throw new IllegalArgumentException("End date must be after start date.");
     }
 }
