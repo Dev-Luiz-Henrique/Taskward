@@ -52,17 +52,17 @@ public class TaskEventRepository {
             taskEvent.setId(cursor.getInt(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_ID)));
             taskEvent.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_USER_ID)));
             taskEvent.setTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_TASK_ID)));
-            taskEvent.setScheduledDate(DateUtils.parseTimestamp(
+            taskEvent.setScheduledDate(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_SCHEDULED_DATE)))
             );
-            taskEvent.setCompletedDate(DateUtils.parseTimestamp(
+            taskEvent.setCompletedDate(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_COMPLETED_DATE)))
             );
             taskEvent.setPointsEarned(cursor.getInt(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_POINTS_EARNED)));
             taskEvent.setStatus(TaskEventStatusEnum.fromString(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_STATUS)))
             );
-            taskEvent.setCreatedAt(DateUtils.parseTimestamp(
+            taskEvent.setCreatedAt(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_CREATED_AT)))
             );
 
@@ -92,11 +92,11 @@ public class TaskEventRepository {
             ContentValues values = new ContentValues();
             values.put(TaskEventTable.COLUMN_USER_ID, taskEvent.getUserId());
             values.put(TaskEventTable.COLUMN_TASK_ID, taskEvent.getTaskId());
-            values.put(TaskEventTable.COLUMN_SCHEDULED_DATE, DateUtils.formatTimestamp(taskEvent.getScheduledDate()));
-            values.put(TaskEventTable.COLUMN_COMPLETED_DATE, DateUtils.formatTimestamp(taskEvent.getCompletedDate()));
+            values.put(TaskEventTable.COLUMN_SCHEDULED_DATE, DateUtils.formatLocalDateTime(taskEvent.getScheduledDate()));
+            values.put(TaskEventTable.COLUMN_COMPLETED_DATE, DateUtils.formatLocalDateTime(taskEvent.getCompletedDate()));
             values.put(TaskEventTable.COLUMN_POINTS_EARNED, taskEvent.getPointsEarned());
             values.put(TaskEventTable.COLUMN_STATUS, taskEvent.getStatus().getValue());
-            values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatTimestamp(taskEvent.getCreatedAt()));
+            values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatLocalDateTime(taskEvent.getCreatedAt()));
 
             long newId = db.insertOrThrow(TaskEventTable.TABLE_NAME, null, values);
             if(newId == -1){
@@ -214,11 +214,11 @@ public class TaskEventRepository {
             ContentValues values = new ContentValues();
             values.put(TaskEventTable.COLUMN_USER_ID, taskEvent.getUserId());
             values.put(TaskEventTable.COLUMN_TASK_ID, taskEvent.getTaskId());
-            values.put(TaskEventTable.COLUMN_SCHEDULED_DATE, DateUtils.formatTimestamp(taskEvent.getScheduledDate()));
-            values.put(TaskEventTable.COLUMN_COMPLETED_DATE, DateUtils.formatTimestamp(taskEvent.getCompletedDate()));
+            values.put(TaskEventTable.COLUMN_SCHEDULED_DATE, DateUtils.formatLocalDateTime(taskEvent.getScheduledDate()));
+            values.put(TaskEventTable.COLUMN_COMPLETED_DATE, DateUtils.formatLocalDateTime(taskEvent.getCompletedDate()));
             values.put(TaskEventTable.COLUMN_POINTS_EARNED, taskEvent.getPointsEarned());
             values.put(TaskEventTable.COLUMN_STATUS, taskEvent.getStatus().getValue());
-            values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatTimestamp(taskEvent.getCreatedAt()));
+            values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatLocalDateTime(taskEvent.getCreatedAt()));
 
             int rowsUpdated = db.update(TaskEventTable.TABLE_NAME, values, selection, selectionArgs);
             if(rowsUpdated == 0)
@@ -251,4 +251,36 @@ public class TaskEventRepository {
             throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Retrieves the next TaskEvent with the same Task ID and a scheduled date after the current TaskEvent.
+     *
+     * @param currentTaskEvent The current TaskEvent to base the search on.
+     * @return The next TaskEvent, or null if no next event exists.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
+     */
+    public TaskEvent getNextTaskEvent(TaskEvent currentTaskEvent) {
+        final String query = "SELECT * FROM " + TaskEventTable.TABLE_NAME +
+                " WHERE " + TaskEventTable.COLUMN_TASK_ID + " = ? AND " +
+                TaskEventTable.COLUMN_SCHEDULED_DATE + " > ?" +
+                " ORDER BY " + TaskEventTable.COLUMN_SCHEDULED_DATE + " ASC LIMIT 1";
+
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
+             Cursor cursor = db.rawQuery(query, new String[] {
+                     String.valueOf(currentTaskEvent.getTaskId()),
+                     DateUtils.formatLocalDateTime(currentTaskEvent.getScheduledDate())
+             })) {
+
+            if (cursor.moveToFirst())
+                return mapCursorToTaskEvent(cursor);
+            else {
+                Logger.w(TAG, "No next task event found for Task ID: " + currentTaskEvent.getTaskId());
+                return null;
+            }
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during getNextTaskEvent: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        }
+    }
+
 }

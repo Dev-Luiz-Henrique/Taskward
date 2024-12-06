@@ -94,4 +94,13 @@ public class MainActivity extends AppCompatActivity {
         Logger.e(TAG, "Error fetching user: " + errorMessage);
         Toast.makeText(this, "Error fetching user", Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Returns the NavigationHelper instance.
+     *
+     * @return The NavigationHelper instance.
+     */
+    public NavigationHelper getNavigationHelper() {
+        return navigationHelper;
+    }
 }

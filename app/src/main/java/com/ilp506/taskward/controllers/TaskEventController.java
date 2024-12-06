@@ -15,6 +15,7 @@ import com.ilp506.taskward.utils.OperationResponse;
 import com.ilp506.taskward.utils.TaskScheduler;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TaskEventController {
@@ -176,8 +177,11 @@ public class TaskEventController {
             if (event == null)
                 return OperationResponse.failure("Task event not found");
 
+            if (event.getStatus() != TaskEventStatusEnum.SCHEDULED)
+                return OperationResponse.failure("Task event is not scheduled");
+
             event.setStatus(TaskEventStatusEnum.COMPLETED);
-            event.setCompletedDate(new Timestamp(System.currentTimeMillis()));
+            event.setCompletedDate(LocalDateTime.now());
             taskEventRepository.updateTaskEvent(event);
 
             User user = userRepository.getUserById(event.getUserId());
@@ -207,6 +211,51 @@ public class TaskEventController {
     }
 
     /**
+     * Reverts the completion of a TaskEvent.
+     *
+     * @param taskEventId The ID of the TaskEvent to revert.
+     * @return OperationResponse indicating success or failure.
+     */
+    public OperationResponse<Void> revertTaskEventCompletion(int taskEventId) {
+        try {
+            TaskEvent event = taskEventRepository.getTaskEventById(taskEventId);
+            if (event == null)
+                return OperationResponse.failure("Task event not found");
+
+            if (event.getStatus() != TaskEventStatusEnum.COMPLETED)
+                return OperationResponse.failure("Task event is not marked as completed");
+
+            event.setStatus(TaskEventStatusEnum.SCHEDULED);
+            event.setCompletedDate(null);
+            taskEventRepository.updateTaskEvent(event);
+
+            User user = userRepository.getUserById(event.getUserId());
+            if (user != null) {
+                user.setPoints(user.getPoints() - event.getPointsEarned());
+                userRepository.updateUser(user);
+            }
+
+            Task task = taskRepository.getTaskById(event.getTaskId());
+            if (task != null) {
+                TaskEvent nextEvent = taskEventRepository.getNextTaskEvent(event);
+                if (nextEvent != null && nextEvent.getStatus() == TaskEventStatusEnum.SCHEDULED)
+                    taskEventRepository.deleteTaskEvent(nextEvent.getId());
+            }
+
+            return OperationResponse.success("Task event completion reverted successfully");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while reverting task event completion in the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while reverting task event completion");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while reverting task event completion");
+        }
+    }
+
+    /**
      * Checks and processes expired TaskEvents, generating the next instances if necessary.
      *
      * @return OperationResponse indicating the result of the operation.
@@ -214,10 +263,10 @@ public class TaskEventController {
     public OperationResponse<Void> checkAndGenerateExpiredEvents() {
         try {
             List<TaskEvent> pendingEvents = taskEventRepository.getAllTaskEvents();
-            Timestamp now = new Timestamp(System.currentTimeMillis());
+            LocalDateTime now = LocalDateTime.now();
 
             for (TaskEvent event : pendingEvents) {
-                if (event.getScheduledDate().before(now) && event.getStatus() == TaskEventStatusEnum.SCHEDULED) {
+                if (event.getScheduledDate().isBefore(now) && event.getStatus() == TaskEventStatusEnum.SCHEDULED) {
 
                     event.setStatus(TaskEventStatusEnum.EXPIRED);
                     taskEventRepository.updateTaskEvent(event);
@@ -233,6 +282,9 @@ public class TaskEventController {
 
             return OperationResponse.success("Expired events processed successfully");
         } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while processing expired task events in the database");
+        } catch (RuntimeException e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Error while processing expired task events");
         } catch (Exception e) {
