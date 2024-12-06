@@ -5,10 +5,8 @@
 -- ================================================================
 -- MAIN USER
 -- ================================================================
-INSERT INTO users (name, points)
-VALUES ('Maria Oliveira', 50);
-
-SELECT last_insert_rowid() AS user_id;
+INSERT INTO users (name, email, points)
+VALUES ('Maria Oliveira', 'maria.oliveira@email.com', 50);
 
 -- ================================================================
 -- ----------------------------------------------------------------
@@ -29,9 +27,10 @@ SELECT last_insert_rowid() AS task_id;
 -- Insert the first scheduled event for today
 INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status)
 VALUES (
-  (SELECT last_insert_rowid() FROM tasks), 
-  (SELECT last_insert_rowid() FROM tasks), 
-  DATE('now'), 10, 'scheduled'
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'), 
+  (SELECT last_insert_rowid()), 
+  DATETIME('now'),
+  10, 'scheduled'
 );
 
 -- ================================================================
@@ -49,9 +48,10 @@ SELECT last_insert_rowid() AS task_id;
 -- Insert the next scheduled event for the upcoming Monday
 INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status)
 VALUES (
-  (SELECT last_insert_rowid() FROM tasks),
-  (SELECT last_insert_rowid() FROM tasks),
-  DATE('now', 'next monday'), 15, 'scheduled'
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  (SELECT last_insert_rowid()),
+  DATETIME('now', 'weekday 1'),
+  15, 'scheduled'
 );
 
 -- ================================================================
@@ -69,9 +69,9 @@ SELECT last_insert_rowid() AS task_id;
 -- Insert the next scheduled event for the 15th of the current month
 INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status)
 VALUES (
-  (SELECT last_insert_rowid() FROM tasks),
-  (SELECT last_insert_rowid() FROM tasks),
-  DATE('now', 'start of month', '+14 days'),
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  (SELECT last_insert_rowid()),
+  DATETIME('now', 'start of month', '+14 days'),
   20, 'scheduled'
 );
 
@@ -90,9 +90,9 @@ SELECT last_insert_rowid() AS task_id;
 -- Insert the next scheduled event for the first day of the next year
 INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status)
 VALUES (
-  (SELECT last_insert_rowid() FROM tasks),
-  (SELECT last_insert_rowid() FROM tasks),
-  DATE('now', 'start of year', '+1 year'),
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  (SELECT last_insert_rowid()),
+  DATETIME('now', 'start of year', '+1 year'),
   30, 'scheduled'
 );
 
@@ -108,7 +108,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'exercise-icon.png', 'Daily exercise',
   'Perform daily physical exercise for 30 minutes.',
-  'daily', 1, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+10 days'), 10
+  'daily', 1, CURRENT_TIMESTAMP, DATETIME('now', '+10 days'), 10
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -117,7 +117,8 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now'), 10, 'scheduled'
+  DATETIME('now'),
+  10, 'scheduled'
 );
 
 -- ================================================================
@@ -128,7 +129,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'weekly-meeting-icon.png', 'Weekly meeting',
   'Attend the weekly team meeting to review progress.',
-  'weekly', 1, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+2 months'), 15
+  'weekly', 1, CURRENT_TIMESTAMP, DATETIME('now', '+2 months'), 15
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -137,7 +138,7 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now', 'next Wednesday'),
+  DATETIME('now', 'weekday 3'),
   15, 'scheduled'
 );
 
@@ -149,7 +150,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'bill-payment-icon.png', 'Monthly bill payment',
   'Pay the monthly bills to keep the services active.',
-  'monthly', 1, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+1 year'), 20
+  'monthly', 1, CURRENT_TIMESTAMP, DATETIME('now', '+1 year'), 20
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -158,7 +159,7 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE(DATE('now', '+1 month'), 'start of month'),
+  DATETIME('now', '+1 month', 'start of month'),
   20, 'scheduled'
 );
 
@@ -170,7 +171,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'yearly-goal-icon.png', 'Annual goal review',
   'Review and adjust personal and professional goals for the upcoming year.',
-  'yearly', 1, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+5 years'), 30
+  'yearly', 1, CURRENT_TIMESTAMP, DATETIME('now', '+5 years'), 30
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -179,7 +180,7 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE(DATE('now', '+1 year'), '+1 month', 'start of month', '+9 days'),
+  DATETIME('now', '+1 year', '+1 month', 'start of month', '+9 days'),
   30, 'scheduled'
 );
 
@@ -195,7 +196,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'hydration-icon.png', 'Drink water regularly',
   'Drink 2L of water every 3 days to maintain hydration.',
-  'daily', 3, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+1 month'), 10
+  'daily', 3, CURRENT_TIMESTAMP, DATETIME('now', '+1 month'), 10
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -204,7 +205,8 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now'), 10, 'scheduled'
+  DATETIME('now'),
+  10, 'scheduled'
 );
 
 -- ================================================================
@@ -215,7 +217,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'project-review-icon.png', 'Project review',
   'Review the project progress every 4 weeks.',
-  'weekly', 4, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+6 months'), 20
+  'weekly', 4, CURRENT_TIMESTAMP, DATETIME('now', '+6 months'), 20
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -224,7 +226,8 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now'), 20, 'scheduled'
+  DATETIME('now'),
+  20, 'scheduled'
 );
 
 -- ================================================================
@@ -235,7 +238,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'billing-review-icon.png', 'Billing review',
   'Review the credit card bill every 2 months to avoid interest.',
-  'monthly', 2, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+1 year'), 30
+  'monthly', 2, CURRENT_TIMESTAMP, DATETIME('now', '+1 year'), 30
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -244,7 +247,8 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now'), 30, 'scheduled'
+  DATETIME('now'),
+  30, 'scheduled'
 );
 
 -- ================================================================
@@ -255,7 +259,7 @@ INSERT INTO tasks (icon, title, description, frequency, frequency_interval, star
 VALUES (
   'long-term-goal-icon.png', 'Long-term goal review',
   'Review long-term goals every 2 years.',
-  'yearly', 2, CURRENT_TIMESTAMP, DATE(CURRENT_TIMESTAMP, '+6 years'), 50
+  'yearly', 2, CURRENT_TIMESTAMP, DATETIME('now', '+6 years'), 50
 );
 SELECT last_insert_rowid() AS task_id;
 
@@ -264,7 +268,60 @@ INSERT INTO task_events (user_id, task_id, scheduled_date, points_earned, status
 VALUES (
   (SELECT id FROM users WHERE name = 'Maria Oliveira'),
   (SELECT last_insert_rowid()),
-  DATE('now'), 50, 'scheduled'
+  DATETIME('now'),
+  50, 'scheduled'
+);
+
+-- ================================================================
+-- ----------------------------------------------------------------
+-- ================================================================
+
+-- ================================================================
+-- REWARDS
+-- ================================================================
+
+-- Reward 1: Coffee Mug
+INSERT INTO rewards (user_id, icon, title, description, points_required, date_redeemed)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  'coffee-mug-icon.png',
+  'Coffee Mug',
+  'Redeem a branded coffee mug to enjoy your beverages.',
+  50,
+  NULL
+);
+
+-- Reward 2: Discount Coupon
+INSERT INTO rewards (user_id, icon, title, description, points_required, date_redeemed)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  'coupon-icon.png',
+  'Discount Coupon',
+  'Get a $10 discount coupon for your next purchase.',
+  100,
+  '2024-12-01 14:00:00'
+);
+
+-- Reward 3: Gym Membership
+INSERT INTO rewards (user_id, icon, title, description, points_required, date_redeemed)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  'gym-icon.png',
+  'Gym Membership',
+  'One-month free gym membership for fitness enthusiasts.',
+  200,
+  NULL
+);
+
+-- Reward 4: Gift Card
+INSERT INTO rewards (user_id, icon, title, description, points_required, date_redeemed)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Maria Oliveira'),
+  'gift-card-icon.png',
+  'Gift Card',
+  'Redeem a $50 gift card for online shopping.',
+  150,
+  '2024-11-25 18:30:00'
 );
 
 -- ================================================================
