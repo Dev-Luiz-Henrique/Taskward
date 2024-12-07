@@ -1,5 +1,6 @@
 package com.ilp506.taskward.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ilp506.taskward.R;
@@ -47,6 +49,9 @@ public class TasksFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
+
+        TextView headerTitle = view.findViewById(R.id.fragmentTitle);
+        headerTitle.setText("all");
 
         navigationHelper = ((MainActivity) requireActivity()).getNavigationHelper();
 

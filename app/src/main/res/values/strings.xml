@@ -11,4 +11,6 @@
     <string name="profile_title">profile</string>
 
     <string name="points_earned">+%1$d</string>
+
+    <string name="create_task_title">create task</string>
 </resources>

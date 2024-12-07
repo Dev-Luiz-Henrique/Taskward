@@ -10,7 +10,8 @@
         <item>@font/outfit_semibold</item>
         <item>@font/outfit_bold</item>
 
-        <item>@font/readex_pro</item>
-        <item>@font/readex_pro_bold</item>
+        <item>@font/readexpro_regular</item>
+        <item>@font/readexpro_semibold</item>
+        <item>@font/readexpro_bold</item>
     </array>
 </resources>

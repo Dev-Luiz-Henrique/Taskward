@@ -45,5 +45,21 @@
         <item name="android:tint">@color/yellow_500</item>
     </style>
 
+    <!-- ================== BUTTON ================== -->
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/custom_button</item>
+        <item name="android:textColor">@color/white_100</item>
+    </style>
 
+    <style name="CustomPinkButtonStyle" parent="CustomButtonStyle">
+        <item name="backgroundTint">@color/pink_500</item>
+    </style>
+
+    <style name="CustomBlueButtonStyle" parent="CustomButtonStyle">
+        <item name="backgroundTint">@color/blue_500</item>
+    </style>
+
+    <style name="CustomYellowButtonStyle" parent="CustomButtonStyle">
+        <item name="backgroundTint">@color/yellow_500</item>
+    </style>
 </resources>

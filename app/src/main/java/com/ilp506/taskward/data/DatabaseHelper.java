@@ -45,4 +45,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // ...
         Logger.d(TAG, "Database upgraded successfully.");
     }
+
+    public boolean deleteDatabase() {
+        boolean isDeleted = context.deleteDatabase(DATABASE_NAME);
+        if (isDeleted)
+            Logger.d(TAG, "Database deleted successfully.");
+        else
+            Logger.d(TAG, "Failed to delete database.");
+        return isDeleted;
+    }
 }
