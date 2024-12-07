@@ -2,26 +2,24 @@ package com.ilp506.taskward.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.exceptions.NavigationHelperException;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,33 +31,20 @@ import java.util.Objects;
 public class NavigationHelper implements LifecycleObserver {
     private static final String TAG = NavigationHelper.class.getSimpleName();
 
-    private final AppCompatActivity activity;
     private final NavController navController;
 
     private final MutableLiveData<Integer> pointsLiveData = new MutableLiveData<>();
 
     /**
-     * Constructs a NavigationHelper for managing navigation tasks in the specified activity.
-     * It attempts to retrieve the NavController from the NavHostFragment and initializes navigation.
+     * Constructor for the NavigationHelper class.
+     * Initializes the NavController using the NavHostFragment.
      *
-     * @param activity The calling AppCompatActivity containing the NavHostFragment.
+     * @param context The context of the calling activity.
      * @throws NavigationHelperException If the NavHostFragment is not found.
      */
-    public NavigationHelper(@NonNull AppCompatActivity activity) {
-        this.activity = activity;
-
+    public NavigationHelper(@NonNull Context context) {
         try {
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            NavHostFragment navHostFragment = (NavHostFragment)
-                    fragmentManager.findFragmentById(R.id.nav_host_fragment);
-
-            if (navHostFragment != null)
-                this.navController = navHostFragment.getNavController();
-            else {
-                Logger.e(TAG, "NavHostFragment not found in the layout.");
-                throw new NavigationHelperException("NavHostFragment not found. " +
-                        "Ensure the XML layout includes a <fragment> with ID R.id.nav_host_fragment.");
-            }
+            this.navController = Navigation.findNavController((AppCompatActivity) context, R.id.nav_host_fragment);
         } catch (Exception e) {
             Logger.e(TAG, "Error initializing NavigationHelper: " + e.getMessage(), e);
             throw new NavigationHelperException("Failed to initialize NavigationHelper.", e);
@@ -112,33 +97,19 @@ public class NavigationHelper implements LifecycleObserver {
     }
 
     /**
-     * Configures the Toolbar dynamically based on the active fragment's navigation destination.
-     * It updates the toolbar's title according to the current fragment.
+     * Configures the Toolbar to display the current fragment title.
      *
      * @param toolbar The Toolbar to be updated with the current fragment title.
      * @throws NavigationHelperException If the Toolbar cannot be configured.
      */
     public void setupToolbar(@NonNull Toolbar toolbar) {
-        try {
-            TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-            if (toolbarTitle == null) {
-                Logger.w(TAG, "Toolbar title TextView not found.");
-                throw new NavigationHelperException("Toolbar title TextView not found in the layout.");
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getLabel() != null) {
+                String label = destination.getLabel().toString();
+                TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
+                toolbarTitle.setText(label);
             }
-
-            Map<Integer, Integer> destinationToTitleMap = new HashMap<>();
-            destinationToTitleMap.put(R.id.tasksFragment, R.string.tasks_title);
-            destinationToTitleMap.put(R.id.rewardsFragment, R.string.rewards_title);
-            destinationToTitleMap.put(R.id.profileFragment, R.string.profile_title);
-
-            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-                Integer titleResId = destinationToTitleMap.getOrDefault(destination.getId(), R.string.app_name);
-                toolbarTitle.setText(activity.getString(titleResId));
-            });
-        } catch (Exception e) {
-            Logger.e(TAG, "Error setting up Toolbar with NavController: " + e.getMessage(), e);
-            throw new NavigationHelperException("Failed to configure Toolbar with NavController.", e);
-        }
+        });
     }
 
     /**
@@ -153,16 +124,20 @@ public class NavigationHelper implements LifecycleObserver {
     private void configureMenuItem(@NonNull BottomNavigationView navView,
                                    int itemId, int iconResId, int tintResId) {
         try {
-            Context context = activity.getApplicationContext();
-            Drawable icon = ContextCompat.getDrawable(context, iconResId);
+            MenuItem menuItem = navView.getMenu().findItem(itemId);
+            if(menuItem == null) {
+                Logger.w(TAG, "Menu item not found: " + itemId);
+                throw new NavigationHelperException("Menu item not found.");
+            }
+
+            Drawable icon = ContextCompat.getDrawable(navView.getContext(), iconResId);
             if (icon == null) {
                 Logger.w(TAG, "Drawable resource not found for item: " + itemId);
                 throw new NavigationHelperException("Drawable resource not found for menu item.");
             }
 
-            icon.setTintList(ContextCompat.getColorStateList(context, tintResId));
-            Objects.requireNonNull(navView.getMenu().findItem(itemId))
-                    .setIcon(icon);
+            icon.setTintList(ContextCompat.getColorStateList(navView.getContext(), tintResId));
+            navView.getMenu().findItem(itemId).setIcon(icon);
         } catch (Exception e) {
             Logger.e(TAG, "Error configuring menu item: " + e.getMessage(), e);
             throw new NavigationHelperException("Failed to configure menu item.", e);

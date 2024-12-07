@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        setupNavigationHelper();
-        setupObservers();
-        loadUserAndInitializePoints();
+        findViewById(R.id.nav_host_fragment).post(() -> {
+            setupNavigationHelper();
+            setupObservers();
+            loadUserAndInitializePoints();
+        });
     }
 
     /**
@@ -80,19 +82,11 @@ public class MainActivity extends AppCompatActivity {
         if (response.isSuccessful()) {
             User user = response.getData();
             navigationHelper.updatePoints(user.getPoints());
-        } else {
-            handleUserLoadingError(response.getMessage());
         }
-    }
-
-    /**
-     * Handles errors during user loading.
-     *
-     * @param errorMessage The error message to log and display.
-     */
-    private void handleUserLoadingError(String errorMessage) {
-        Logger.e(TAG, "Error fetching user: " + errorMessage);
-        Toast.makeText(this, "Error fetching user", Toast.LENGTH_SHORT).show();
+        else {
+            Logger.e(TAG, "Error fetching user: " + response.getMessage());
+            Toast.makeText(this, "Error fetching user", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
