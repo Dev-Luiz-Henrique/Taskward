@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
@@ -20,15 +19,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.exceptions.NavigationHelperException;
 
-import java.util.Objects;
-
 /**
  * A helper class for managing navigation-related functionality in the app.
  * It handles setting up the navigation controller, bottom navigation, and toolbar customization.
  * This class also updates the navigation bar and toolbar dynamically based on the active fragment.
  * Implements the LifecycleObserver interface to manage NavController lifecycle events.
  */
-public class NavigationHelper implements LifecycleObserver {
+public class NavigationHelper {
     private static final String TAG = NavigationHelper.class.getSimpleName();
 
     private final NavController navController;
@@ -81,9 +78,19 @@ public class NavigationHelper implements LifecycleObserver {
     public void setupBottomNavigationView(@NonNull BottomNavigationView bottomNavigationView) {
         try {
             NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            bottomNavigationView.setOnItemSelectedListener(item -> {
+                try {
+                    if (item.getItemId() == R.id.tasksFragment)
+                        navController.popBackStack(R.id.tasksFragment, false);
+                    else
+                        navController.navigate(item.getItemId());
+                    return true;
+                } catch (Exception e) {
+                    throw new NavigationHelperException("Navigation failed for item: " + item.getItemId(), e);
+                }
+            });
 
             bottomNavigationView.setItemIconTintList(null);
-
             configureMenuItem(bottomNavigationView, R.id.tasksFragment,
                     R.drawable.ic_menu_task, R.color.tasks_item_color);
             configureMenuItem(bottomNavigationView, R.id.rewardsFragment,
@@ -113,7 +120,7 @@ public class NavigationHelper implements LifecycleObserver {
     }
 
     /**
-     * Helper method to configure the icon and color tint for a specific menu item in the BottomNavigationView.
+     * Configures a specific menu item in the BottomNavigationView with an icon and tint color.
      *
      * @param navView   The BottomNavigationView instance.
      * @param itemId    The ID of the menu item to configure.
@@ -141,6 +148,24 @@ public class NavigationHelper implements LifecycleObserver {
         } catch (Exception e) {
             Logger.e(TAG, "Error configuring menu item: " + e.getMessage(), e);
             throw new NavigationHelperException("Failed to configure menu item.", e);
+        }
+    }
+
+    /**
+     * Navigates to a specific destination using the NavController.
+     *
+     * @param destinationId The ID of the destination (action or fragment) to navigate to.
+     * @throws NavigationHelperException If navigation fails.
+     */
+    public void navigateTo(int destinationId) {
+        try {
+            if (navController != null)
+                navController.navigate(destinationId);
+            else
+                throw new NavigationHelperException("NavController is null. Cannot navigate.");
+        } catch (Exception e) {
+            Logger.e(TAG, "Error navigating to destination: " + destinationId, e);
+            throw new NavigationHelperException("Failed to navigate to destination.", e);
         }
     }
 }

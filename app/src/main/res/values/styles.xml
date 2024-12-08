@@ -45,9 +45,21 @@
         <item name="android:tint">@color/yellow_500</item>
     </style>
 
+    <!-- ================== SLIDER ================== -->
+    <style name="CustomSliderStyle" parent="Widget.MaterialComponents.Slider">
+        <item name="labelStyle">@style/CustomSliderLabelStyle</item>
+        <item name="trackHeight">8dp</item>
+    </style>
+
+    <style name="CustomSliderLabelStyle" parent="Widget.MaterialComponents.Tooltip">
+        <item name="backgroundTint">@color/white_100</item>
+        <item name="android:textColor">@color/gray_500</item>
+    </style>
+
+
     <!-- ================== BUTTON ================== -->
     <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/custom_button</item>
+        <item name="android:background">@drawable/rounded_corners</item>
         <item name="android:textColor">@color/white_100</item>
     </style>
 
@@ -61,5 +73,38 @@
 
     <style name="CustomYellowButtonStyle" parent="CustomButtonStyle">
         <item name="backgroundTint">@color/yellow_500</item>
+    </style>
+
+    <!-- ================== FORM ================== -->
+    <style name="CustomFormContainerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+    <style name="CustomFormLabelStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/readexpro_semibold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+    </style>
+
+    <style name="CustomFormInputBoxStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:backgroundTint">@color/white_100</item>
+        <item name="android:textColorHint">@color/gray_500_50</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:fontFamily">@font/readexpro_regular</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <style name="CustomFormDateBoxStyle" parent="CustomFormInputBoxStyle">
+        <item name="android:focusable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:inputType">date</item>
     </style>
 </resources>

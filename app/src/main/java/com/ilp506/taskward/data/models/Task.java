@@ -141,8 +141,8 @@ public class Task {
             throw new IllegalArgumentException("ID must be greater than or equal to 0.");
         if (icon == null || icon.trim().isEmpty())
             throw new IllegalArgumentException("Icon is required.");
-        if (title == null || title.trim().isEmpty())
-            throw new IllegalArgumentException("Title is required.");
+        if (title == null || title.trim().isEmpty() || title.length() > 100)
+            throw new IllegalArgumentException("Title is required and must be less than 100 characters.");
         if (description != null && description.length() > 255)
             throw new IllegalArgumentException("Description must be less than 255 characters.");
         if (frequency == null)

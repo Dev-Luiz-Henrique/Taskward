@@ -6,7 +6,11 @@
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.ilp506.taskward.ui.fragments.TasksFragment"
-        android:label="@string/tasks_title" />
+        android:label="@string/tasks_title">
+        <action
+            android:id="@+id/action_tasksFragment_to_createTaskFragment"
+            app:destination="@id/createTaskFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/rewardsFragment"
@@ -17,5 +21,10 @@
         android:id="@+id/profileFragment"
         android:name="com.ilp506.taskward.ui.fragments.ProfileFragment"
         android:label="@string/profile_title" />
+
+    <fragment
+        android:id="@+id/createTaskFragment"
+        android:name="com.ilp506.taskward.ui.fragments.CreateTaskFragment"
+        android:label="@string/tasks_title" />
 
 </navigation>

@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +56,6 @@ public class TasksFragment extends Fragment {
         TextView headerTitle = view.findViewById(R.id.fragmentTitle);
         headerTitle.setText("all");
 
-        navigationHelper = ((MainActivity) requireActivity()).getNavigationHelper();
-
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -75,6 +76,25 @@ public class TasksFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        navigationHelper = ((MainActivity) requireActivity()).getNavigationHelper();
+
+        Button createTaskButton = view.findViewById(R.id.createTaskButton);
+        createTaskButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.action_tasksFragment_to_createTaskFragment);
+            /*if (navigationHelper != null) {
+                navigationHelper.navigateTo(R.id.action_tasksFragment_to_createTaskFragment);
+            } else {
+                Toast.makeText(requireContext(), "NavigationHelper is not initialized", Toast.LENGTH_SHORT).show();
+            }*/
+        });
+    }
+
 
     private void onTaskStatusChanged(TaskEvent taskEvent, boolean isChecked) {
         OperationResponse<Void> taskEventResponse;
