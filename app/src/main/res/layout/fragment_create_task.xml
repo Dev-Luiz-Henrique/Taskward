@@ -13,6 +13,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutForm"
             style="@style/CustomFormStyle"
+            android:backgroundTint="@color/pink_500_50"
             app:layout_constraintEnd_toEndOf="parent">
 
             <!-- Container Title -->

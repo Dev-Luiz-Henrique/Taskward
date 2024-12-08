@@ -8,6 +8,7 @@ public final class DatabaseContract {
         public static final String TABLE_NAME = "users";
         public static final String COLUMN_ID = "id";
         public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_EMAIL = "email";
         public static final String COLUMN_PHOTO = "photo";
         public static final String COLUMN_POINTS = "points";
         public static final String COLUMN_CREATED_AT = "created_at";

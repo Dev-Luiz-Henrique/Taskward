@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.CreateProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutForm"
+        style="@style/CustomFormStyle"
+        android:backgroundTint="@color/yellow_500_50">
+
+        <!-- Container Profile Picture -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutProfilePicture"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="0dp"
+            style="@style/CustomFormContainerStyle">
+
+            <ImageButton
+                android:id="@+id/buttonProfilePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/create_profile_picture_description"
+                android:src="@drawable/ic_user_profile"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Container Name -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutProfileName"
+            app:layout_constraintTop_toBottomOf="@id/layoutProfilePicture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/CustomFormContainerStyle">
+
+            <TextView
+                android:id="@+id/textLabelProfileName"
+                style="@style/CustomFormLabelStyle"
+                android:text="@string/create_profile_name"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/editProfileName"
+                style="@style/CustomFormInputBoxStyle"
+                android:autofillHints="name"
+                android:hint="@string/create_profile_input_name"
+                android:inputType="textPersonName"
+                app:layout_constraintTop_toBottomOf="@id/textLabelProfileName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Container Email -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutProfileEmail"
+            app:layout_constraintTop_toBottomOf="@id/layoutProfileName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/CustomFormContainerStyle">
+
+            <TextView
+                android:id="@+id/textLabelProfileEmail"
+                style="@style/CustomFormLabelStyle"
+                android:text="@string/create_profile_email"
+                android:labelFor="@id/editTaskDescription"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/editProfileEmail"
+                style="@style/CustomFormInputBoxStyle"
+                android:hint="@string/create_profile_input_email"
+                android:autofillHints="emailAddress"
+                android:inputType="textEmailAddress"
+                android:maxLength="255"
+                app:layout_constraintTop_toBottomOf="@id/textLabelProfileEmail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Container Create -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutCreateProfile"
+            app:layout_constraintTop_toBottomOf="@id/layoutProfileEmail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/CustomFormContainerStyle">
+
+            <ImageButton
+                android:id="@+id/buttonCreateProfile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_plus"
+                android:contentDescription="@string/create_profile"
+                style="@style/CustomYellowButtonStyle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

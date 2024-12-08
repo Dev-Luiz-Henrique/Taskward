@@ -35,7 +35,6 @@ import java.util.Arrays;
  */
 public class CreateTaskFragment extends Fragment {
 
-    // Controller responsible for task-related operations
     private TaskController taskController;
 
     public CreateTaskFragment() {

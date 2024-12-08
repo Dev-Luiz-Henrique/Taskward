@@ -14,6 +14,7 @@ public class User {
 
     private int id;
     private String name;
+    private String email;
     private String photo;
     private int points;
     private LocalDateTime createdAt;
@@ -39,6 +40,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhoto() {
@@ -77,6 +86,7 @@ public class User {
         return "User { " +
                 "id=" + id +
                 ", name='" + name +
+                ", email='" + email +
                 ", photo='" + photo +
                 ", points=" + points +
                 ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
@@ -89,8 +99,10 @@ public class User {
      * @throws IllegalArgumentException If any validation rule is violated.
      */
     public void validate() throws IllegalArgumentException {
-        if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Name is required.");
+        if (name == null || name.trim().isEmpty() || name.length() > 100)
+            throw new IllegalArgumentException("Name is required and must be less than 100 characters.");
+        if (email == null || email.trim().isEmpty() || email.length() > 255)
+            throw new IllegalArgumentException("Email is required and must be less than 255 characters.");
         if (photo != null && photo.length() > 255)
             throw new IllegalArgumentException("Photo must be less than 255 characters.");
         if (points < 0)

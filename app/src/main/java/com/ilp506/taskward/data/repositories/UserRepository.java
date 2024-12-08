@@ -46,6 +46,7 @@ public class UserRepository {
         try {
             user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_ID)));
             user.setName(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME)));
+            user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_EMAIL)));
             user.setPhoto(cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_PHOTO)));
             user.setPoints(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_POINTS)));
             user.setCreatedAt(DateUtils.parseLocalDateTime(
@@ -74,6 +75,7 @@ public class UserRepository {
 
             ContentValues values = new ContentValues();
             values.put(UserTable.COLUMN_NAME, user.getName());
+            values.put(UserTable.COLUMN_EMAIL, user.getEmail());
             values.put(UserTable.COLUMN_PHOTO, user.getPhoto());
 
             long newId = db.insertOrThrow(UserTable.TABLE_NAME, null, values);
@@ -145,6 +147,7 @@ public class UserRepository {
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(UserTable.COLUMN_NAME, user.getName());
+            values.put(UserTable.COLUMN_EMAIL, user.getEmail());
             values.put(UserTable.COLUMN_PHOTO, user.getPhoto());
             values.put(UserTable.COLUMN_POINTS, user.getPoints());
 
