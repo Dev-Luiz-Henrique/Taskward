@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ================== SCROLLVIEW ================== -->
+    <style name="CustomScrollViewFormStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fillViewport">true</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:clipChildren">false</item>
+        <item name="android:paddingBottom">40dp</item>
+    </style>
+
+    <!-- ================== FORM ================== -->
+    <style name="CustomFormStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">18dp</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:backgroundTint">@color/pink_500_50</item>
+    </style>
+
+    <!-- ================== CONTAINER FIELDS ================== -->
+    <style name="CustomFormContainerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+    <!-- ================== LABEL ================== -->
+    <style name="CustomFormLabelStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:fontFamily">@font/readexpro_semibold</item>
+    </style>
+
+    <!-- ================== INPUT ================== -->
+    <style name="CustomFormInputBoxStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:textColorHint">@color/gray_500_50</item>
+        <item name="android:fontFamily">@font/outfit_regular</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:backgroundTint">@color/white_100</item>
+    </style>
+
+    <!-- ================== DATE BOX ================== -->
+    <style name="CustomFormDateBoxStyle" parent="CustomFormInputBoxStyle">
+        <item name="android:focusable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:inputType">date</item>
+    </style>
+
+    <!-- ================== TASK FREQUENCY STYLES ================== -->
+    <style name="CustomFormFrequencyContainerStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <style name="CustomFormFrequencyTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:fontFamily">@font/outfit_regular</item>
+    </style>
+
+    <style name="CustomFormCheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:button">@drawable/custom_form_checkbox</item>
+    </style>
+</resources>

@@ -12,10 +12,14 @@
 
     <string name="points_earned">+%1$d</string>
 
+    <!-- Create Task -->
     <string name="create_task">create task</string>
+
     <string name="create_task_title">title</string>
     <string name="create_task_description">description</string>
     <string name="create_task_frequency">frequency</string>
+    <string name="create_task_frequency_value">Every</string>
+    <string name="create_task_frequency_repeat">Always repeat</string>
     <string name="create_task_start_date">start date</string>
     <string name="create_task_end_date">end date</string>
     <string name="create_task_difficulty">difficulty</string>
@@ -25,11 +29,4 @@
     <string name="create_task_input_frequency">select frequency</string>
     <string name="create_task_input_start_date">select start date</string>
     <string name="create_task_input_end_date">select end date</string>
-
-    <string-array name="frequency_options">
-        <item>daily</item>
-        <item>weekly</item>
-        <item>monthly</item>
-        <item>yearly</item>
-    </string-array>
 </resources>
