@@ -11,10 +11,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.controllers.UserController;
+import com.ilp506.taskward.data.DatabaseHelper;
 import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.UserRepository;
 import com.ilp506.taskward.utils.CacheManager;
@@ -85,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Logger.e(TAG, "Error fetching user: " + response.getMessage());
-            Toast.makeText(this, "Error fetching user", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User not found. Please create a profile.",
+                    Toast.LENGTH_SHORT).show();
+
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            navController.navigate(R.id.action_global_to_createProfileFragment);
         }
     }
 

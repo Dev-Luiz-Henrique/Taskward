@@ -27,4 +27,17 @@
         android:name="com.ilp506.taskward.ui.fragments.CreateTaskFragment"
         android:label="@string/tasks_title" />
 
+    <fragment
+        android:id="@+id/createProfileFragment"
+        android:name="com.ilp506.taskward.ui.fragments.CreateProfileFragment"
+        android:label="@string/profile_title">
+        <action
+            android:id="@+id/action_createProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_createProfileFragment"
+        app:destination="@id/createProfileFragment"
+        />
 </navigation>

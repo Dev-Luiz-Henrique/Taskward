@@ -6,6 +6,7 @@ import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.UserRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.utils.CacheManager;
 import com.ilp506.taskward.utils.OperationResponse;
 
 /**
@@ -17,6 +18,8 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    private final CacheManager cacheManager;
+
     /**
      * Constructs a UserController with a UserRepository instance.
      *
@@ -24,6 +27,7 @@ public class UserController {
      */
     public UserController(Context context) {
         this.userRepository = new UserRepository(context);
+        this.cacheManager = new CacheManager(context);
     }
 
     /**
@@ -47,6 +51,9 @@ public class UserController {
             user.validate();
 
             User createdUser = userRepository.createUser(user);
+            if(createdUser != null)
+                cacheManager.saveUserId(createdUser.getId());
+
             return OperationResponse.success("User created successfully", createdUser);
         } catch (IllegalArgumentException e) {
             ExceptionHandler.handleException(e);
@@ -134,6 +141,8 @@ public class UserController {
                 return OperationResponse.failure("User not found");
 
             userRepository.deleteUser(userId);
+            if (userRepository.getUserById(userId) == null && userId == cacheManager.getUserId())
+                cacheManager.clearCache();
 
             return OperationResponse.success("User deleted successfully");
         } catch (IllegalArgumentException e) {

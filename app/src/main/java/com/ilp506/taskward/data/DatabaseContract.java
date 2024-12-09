@@ -13,7 +13,7 @@ public final class DatabaseContract {
         public static final String COLUMN_POINTS = "points";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String[] ALL_COLUMNS = {
-                COLUMN_ID, COLUMN_NAME, COLUMN_PHOTO, COLUMN_POINTS, COLUMN_CREATED_AT
+                COLUMN_ID, COLUMN_NAME, COLUMN_EMAIL, COLUMN_PHOTO, COLUMN_POINTS, COLUMN_CREATED_AT
         };
     }
 

@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -90,7 +92,9 @@ public class CreateProfileFragment extends Fragment {
         OperationResponse<User> response = userController.createUser(user);
         if (response.isSuccessful()) {
             Toast.makeText(requireContext(), "Profile created successfully!", Toast.LENGTH_SHORT).show();
-            // TODO: Implement navigation to profile list or details screen
+
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_createProfileFragment_to_profileFragment);
         }
         else {
             Toast.makeText(requireContext(), "Failed to create profile. Try again.", Toast.LENGTH_SHORT).show();
