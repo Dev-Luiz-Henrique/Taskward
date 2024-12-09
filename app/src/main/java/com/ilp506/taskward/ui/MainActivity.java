@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,7 +29,7 @@ import com.ilp506.taskward.utils.OperationResponse;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    private final MutableLiveData<NavigationHelper> navigationHelperLiveData = new MutableLiveData<>();
     private NavigationHelper navigationHelper;
     private TextView pointsTextView;
 
@@ -43,21 +45,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.nav_host_fragment).post(() -> {
-            setupNavigationHelper();
+            navigationHelper = new NavigationHelper(this);
+            navigationHelperLiveData.setValue(navigationHelper);
+
+            setupComponents();
             setupObservers();
             loadUserAndInitializePoints();
         });
     }
 
     /**
-     * Sets up the NavigationHelper and related components.
+     * Sets up the components and UI elements of the activity.
      */
-    private void setupNavigationHelper() {
+    private void setupComponents() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         Toolbar toolbar = findViewById(R.id.custom_toolbar);
         pointsTextView = toolbar.findViewById(R.id.toolbar_points);
 
-        navigationHelper = new NavigationHelper(this);
         navigationHelper.setupBottomNavigationView(bottomNavigationView);
         navigationHelper.setupToolbar(toolbar);
     }
@@ -94,6 +98,16 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
             navController.navigate(R.id.action_global_to_createProfileFragment);
         }
+    }
+
+
+    /**
+     * Exposes the NavigationHelper as LiveData for fragments.
+     *
+     * @return LiveData containing the NavigationHelper instance.
+     */
+    public LiveData<NavigationHelper> getNavigationHelperLiveData() {
+        return navigationHelperLiveData;
     }
 
     /**

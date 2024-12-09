@@ -32,6 +32,7 @@ import com.ilp506.taskward.utils.OperationResponse;
 import java.util.List;
 
 public class TasksFragment extends Fragment {
+    private static final String TAG = TasksFragment.class.getSimpleName();
 
     private TaskEventController taskEventController;
 
@@ -83,18 +84,14 @@ public class TasksFragment extends Fragment {
 
         navigationHelper = ((MainActivity) requireActivity()).getNavigationHelper();
 
-        Button createTaskButton = view.findViewById(R.id.createTaskButton);
-        createTaskButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-            navController.navigate(R.id.action_tasksFragment_to_createTaskFragment);
-            /*if (navigationHelper != null) {
-                navigationHelper.navigateTo(R.id.action_tasksFragment_to_createTaskFragment);
-            } else {
-                Toast.makeText(requireContext(), "NavigationHelper is not initialized", Toast.LENGTH_SHORT).show();
-            }*/
+        MainActivity activity = (MainActivity) requireActivity();
+        activity.getNavigationHelperLiveData().observe(getViewLifecycleOwner(), helper -> {
+            if (helper != null) {
+                navigationHelper = helper;
+                setupButtonClickListener(view);
+            }
         });
     }
-
 
     private void onTaskStatusChanged(TaskEvent taskEvent, boolean isChecked) {
         OperationResponse<Void> taskEventResponse;
@@ -121,5 +118,10 @@ public class TasksFragment extends Fragment {
             Toast.makeText(requireContext(), "Error updating task event", Toast.LENGTH_SHORT).show();
             Logger.e("TasksFragment", "Error updating task event: " + taskEventResponse.getMessage());
         }
+    }
+
+    private void setupButtonClickListener(@NonNull View view) {
+        Button createTaskButton = view.findViewById(R.id.createTaskButton);
+        createTaskButton.setOnClickListener(v -> navigationHelper.navigateTo(R.id.action_tasksFragment_to_createTaskFragment));
     }
 }
