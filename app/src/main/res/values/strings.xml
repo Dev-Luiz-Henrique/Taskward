@@ -11,6 +11,7 @@
     <string name="profile_title">profile</string>
 
     <string name="points_earned">+%1$d</string>
+    <string name="all_tasks_title">all</string>"
 
     <!-- Create Profile -->
     <string name="create_profile">create profile</string>

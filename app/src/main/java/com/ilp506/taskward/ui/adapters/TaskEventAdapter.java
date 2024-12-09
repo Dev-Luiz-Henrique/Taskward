@@ -53,6 +53,7 @@ public class TaskEventAdapter extends RecyclerView.Adapter<TaskEventAdapter.Task
         private final TextView points;
         private final ImageView star;
         private final CheckBox checkBox;
+        private boolean isBinding;
 
         public TaskEventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +63,8 @@ public class TaskEventAdapter extends RecyclerView.Adapter<TaskEventAdapter.Task
             checkBox = itemView.findViewById(R.id.taskCheckBox);
 
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isBinding) return;
+
                 if (statusChangeListener != null) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
@@ -74,13 +77,14 @@ public class TaskEventAdapter extends RecyclerView.Adapter<TaskEventAdapter.Task
         }
 
         public void bind(@NonNull TaskEvent taskEvent) {
+            isBinding = true;
             title.setText(taskEvent.getTitle());
             String pointsText = itemView.getContext().getString(R.string.points_earned, taskEvent.getPointsEarned());
             points.setText(pointsText);
             checkBox.setChecked(taskEvent.isCompleted());
             updateTaskAppearance(taskEvent.isCompleted());
+            isBinding = false;
         }
-
         private void updateTaskAppearance(boolean isCompleted) {
             if (isCompleted) {
                 title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);

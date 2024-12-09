@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.ilp506.taskward.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,7 +59,7 @@ public class UIUtils {
                                         @NonNull AdapterView.OnItemSelectedListener listener) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 context,
-                android.R.layout.simple_spinner_item,
+                R.layout.custom_spinner_item,
                 displayValues
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
