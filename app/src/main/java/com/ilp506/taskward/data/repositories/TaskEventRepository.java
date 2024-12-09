@@ -283,4 +283,38 @@ public class TaskEventRepository {
         }
     }
 
+    /**
+     * Retrieves all task events associated with a specific task ID.
+     *
+     * @param taskId The ID of the task to retrieve task events for.
+     * @return A list of TaskEvent instances associated with the specified task ID.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
+     */
+    public List<TaskEvent> getAllTaskEventsByTaskId(int taskId) {
+        final String[] columns = TaskEventTable.ALL_COLUMNS;
+        final String selection = TaskEventTable.COLUMN_TASK_ID + " = ?";
+        final String[] selectionArgs = {String.valueOf(taskId)};
+
+        List<TaskEvent> taskEvents = new ArrayList<>();
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
+             Cursor cursor = db.query(
+                     TaskEventTable.TABLE_NAME,
+                     columns,
+                     selection,
+                     selectionArgs,
+                     null,
+                     null,
+                     null
+             )) {
+
+            while (cursor.moveToNext()) {
+                TaskEvent taskEvent = mapCursorToTaskEvent(cursor);
+                taskEvents.add(taskEvent);
+            }
+            return taskEvents;
+        } catch (SQLiteException e) {
+            Logger.e(TAG, "SQLite error during getAllTaskEventsByTaskId: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.ilp506.taskward.data.enums.TaskFrequencyEnum;
 import com.ilp506.taskward.utils.DateUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Represents a task in the system.
@@ -22,6 +23,7 @@ public class Task {
     private LocalDateTime endDate;
     private int pointsReward;
     private LocalDateTime createdAt;
+    private List<TaskEvent> taskEvents;
 
     /**
      * Constructs a new Task object with the current timestamp as the creation and start time.
@@ -109,6 +111,14 @@ public class Task {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<TaskEvent> getTaskEvents() {
+        return taskEvents;
+    }
+
+    public void setTaskEvents(List<TaskEvent> events) {
+        this.taskEvents = events;
     }
 
     /**

@@ -185,4 +185,65 @@ public class TaskController {
             return OperationResponse.failure("Unexpected error occurred while deleting task");
         }
     }
+
+    /**
+     * Retrieves all tasks with their associated task events.
+     *
+     * @return OperationResponse containing the list of tasks with associated task events or failure message.
+     */
+    public OperationResponse<List<Task>> getAllTasksWithTaskEvents() {
+        try {
+            List<Task> tasks = taskRepository.getAllTasks();
+            if (tasks.isEmpty())
+                return OperationResponse.failure("No tasks found.");
+
+            for (Task task : tasks) {
+                List<TaskEvent> taskEvents = taskEventRepository.getAllTaskEventsByTaskId(task.getId());
+                task.setTaskEvents(taskEvents);
+            }
+
+            return OperationResponse.success("Tasks with events retrieved successfully", tasks);
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving tasks with events from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving tasks with events");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while retrieving tasks with events");
+        }
+    }
+
+    /**
+     * Retrieves a task by its ID and its associated task events.
+     *
+     * @param taskId The ID of the task to retrieve.
+     * @return OperationResponse containing the task with associated task events or failure message.
+     */
+    public OperationResponse<Task> getTaskByIdWithTaskEvents(int taskId) {
+        try {
+            validateTaskId(taskId);
+            Task task = taskRepository.getTaskById(taskId);
+            if (task == null)
+                return OperationResponse.failure("Task not found");
+
+            List<TaskEvent> taskEvents = taskEventRepository.getAllTaskEventsByTaskId(taskId);
+            task.setTaskEvents(taskEvents);
+
+            return OperationResponse.success("Task with events retrieved successfully", task);
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid task ID provided");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task with events from the database");
+        } catch (RuntimeException e){
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while retrieving task with events");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while retrieving task with events");
+        }
+    }
 }
