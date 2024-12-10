@@ -31,9 +31,16 @@ import com.ilp506.taskward.utils.OperationResponse;
 
 import java.util.List;
 
+/**
+ * Fragment for displaying tasks events in the TaskWard app.
+ */
 public class TasksFragment extends Fragment {
     private TaskEventController taskEventController;
     private NavigationHelper navigationHelper;
+
+    private TextView headerTitle;
+    private RecyclerView recyclerView;
+    private Button createTaskButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +55,9 @@ public class TasksFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        setupComponents(view);
-        loadTaskEvents(view);
+        initializeUI(view);
+        setupComponents();
+        loadTaskEvents();
         return view;
     }
 
@@ -60,33 +68,39 @@ public class TasksFragment extends Fragment {
     }
 
     /**
-     * Sets up the components for the fragment.
+     * Initializes the UI components of the fragment.
+     *
      * @param view The view of the fragment
      */
-    private void setupComponents(@NonNull View view) {
-        TextView headerTitle = view.findViewById(R.id.fragmentTitle);
-        headerTitle.setText(R.string.all_tasks_title);
+    private void initializeUI(@NonNull View view) {
+        headerTitle = view.findViewById(R.id.fragmentTitle);
+        recyclerView = view.findViewById(R.id.recyclerView);
+        createTaskButton = view.findViewById(R.id.createTaskButton);
+    }
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+    /**
+     * Sets up the components for the fragment.
+     */
+    private void setupComponents() {
+        headerTitle.setText(R.string.all_tasks_header);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
         DividerItemDecoration divider = new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
     }
 
     /**
      * Loads the task events and sets up the task adapter.
-     * @param view The view of the fragment
      */
-    private void loadTaskEvents(@NonNull View view) {
+    private void loadTaskEvents() {
         OperationResponse<List<TaskEvent>> response = taskEventController.getAllTaskEvents();
-        List<TaskEvent> taskEvents = response.getData();
 
         if (response.isSuccessful()) {
+            List<TaskEvent> taskEvents = response.getData();
             TaskEventAdapter adapter = new TaskEventAdapter(taskEvents, this::onTaskStatusChanged);
-            RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
             recyclerView.setAdapter(adapter);
-        } else
+        }
+        else
             Toast.makeText(requireContext(), "Error loading tasks", Toast.LENGTH_SHORT).show();
     }
 
@@ -132,7 +146,6 @@ public class TasksFragment extends Fragment {
         helperLiveData.observe(getViewLifecycleOwner(), helper -> {
             if (helper != null) {
                 navigationHelper = helper;
-                Button createTaskButton = view.findViewById(R.id.createTaskButton);
                 createTaskButton.setOnClickListener(v ->
                         navigationHelper.navigateTo(R.id.action_tasksFragment_to_createTaskFragment)
                 );

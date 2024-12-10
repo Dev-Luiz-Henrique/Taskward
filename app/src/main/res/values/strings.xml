@@ -6,25 +6,26 @@
     <string name="menu_botton_bar_reward">Hello blank fragment</string>
     <string name="menu_botton_bar_profile">Hello blank fragment</string>
 
+
+    <!-- ================== Task Fragment ================== -->
     <string name="tasks_title">tasks</string>
-    <string name="rewards_title">rewards</string>
-    <string name="profile_title">profile</string>
+
+    <string name="all_tasks_header">all</string>
 
     <string name="points_earned">+%1$d</string>
-    <string name="all_tasks_title">all</string>"
 
-    <!-- Create Profile -->
-    <string name="create_profile">create profile</string>
+    <!-- ================== Rewards Fragment ================== -->
+    <string name="rewards_title">rewards</string>
 
-    <string name="create_profile_name">name</string>
-    <string name="create_profile_email">email</string>
+    <!-- ================== Profile Fragment ================== -->
+    <string name="profile_title">profile</string>
 
-    <string name="create_profile_input_name">enter name</string>
-    <string name="create_profile_input_email">enter email</string>
+    <string name="profile_statistics_header">statistics</string>
 
-    <string name="create_profile_picture_description">Choose an image for your profile picture</string>
+    <string name="profile_statistics_task">task</string>">
+    <string name="profile_statistics_done">done</string>
 
-    <!-- Create Task -->
+    <!-- ================== Create Task Fragment ================== -->
     <string name="create_task">create task</string>
 
     <string name="create_task_title">title</string>
@@ -41,4 +42,15 @@
     <string name="create_task_input_frequency">select frequency</string>
     <string name="create_task_input_start_date">select start date</string>
     <string name="create_task_input_end_date">select end date</string>
+
+    <!-- ================== Create Profile Fragment ================== -->
+    <string name="create_profile">create profile</string>
+
+    <string name="create_profile_name">name</string>
+    <string name="create_profile_email">email</string>
+
+    <string name="create_profile_input_name">enter name</string>
+    <string name="create_profile_input_email">enter email</string>
+
+    <string name="create_profile_picture_description">Choose an image for your profile picture</string>
 </resources>
