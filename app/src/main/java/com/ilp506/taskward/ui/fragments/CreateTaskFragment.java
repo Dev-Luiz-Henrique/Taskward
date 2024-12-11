@@ -216,7 +216,7 @@ public class CreateTaskFragment extends Fragment {
         task.setFrequencyInterval(Integer.parseInt(frequencyValue));
         task.setStartDate(DateUtils.convertToDefaultFormat(startDate));
         task.setEndDate(alwaysRepeat ? null : DateUtils.convertToDefaultFormat(endDate));
-        task.setPointsReward((int) difficulty); // TODO implement logic for points reward calculation
+        task.setPointsReward(((int) difficulty) * 20); // TODO implement logic for points reward calculation
         return task;
     }
 

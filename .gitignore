@@ -19,3 +19,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+taskward-release.jks
+keystore.properties

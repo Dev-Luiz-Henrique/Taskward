@@ -115,8 +115,10 @@ public class TasksFragment extends Fragment {
                 ? taskEventController.completeTaskEvent(taskEvent.getId())
                 : taskEventController.revertTaskEventCompletion(taskEvent.getId());
 
-        if (taskEventResponse.isSuccessful())
+        if (taskEventResponse.isSuccessful()){
             updateUserPoints(taskEvent.getUserId());
+            loadTaskEvents(); // TODO refresh the list is the best practice?
+        }
         else {
             Toast.makeText(requireContext(), "Error updating task status", Toast.LENGTH_SHORT).show();
         }
