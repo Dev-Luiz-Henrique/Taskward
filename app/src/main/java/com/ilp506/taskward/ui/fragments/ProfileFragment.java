@@ -18,7 +18,9 @@ import com.ilp506.taskward.controllers.TaskController;
 import com.ilp506.taskward.controllers.UserController;
 import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
+import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.ui.adapters.TaskAdapter;
+import com.ilp506.taskward.utils.CacheManager;
 import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.OperationResponse;
 
@@ -33,6 +35,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView headerTitle;
     private RecyclerView recyclerView;
+    private TextView profileName;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -53,22 +56,7 @@ public class ProfileFragment extends Fragment {
         initializeUI(view);
         setupComponents();
         loadTasks();
-
-        OperationResponse<List<Task>> response = taskController.getAllTasksWithTaskEvents();
-        if (response.isSuccessful()) {
-            List<Task> tasks = response.getData();
-            if (tasks != null && !tasks.isEmpty()) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                TaskAdapter adapter = new TaskAdapter(tasks);
-                recyclerView.setAdapter(adapter);
-            } else {
-                Logger.e("ProfileFragment", "Task list is null or empty.");
-            }
-
-
-        } else {
-            System.out.println(response.getMessage());
-        }
+        loadProfile();
         return view;
     }
 
@@ -80,6 +68,7 @@ public class ProfileFragment extends Fragment {
     private void initializeUI(@NonNull View view) {
         headerTitle = view.findViewById(R.id.fragmentTitle);
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
+        profileName = view.findViewById(R.id.profileName);
     }
 
     /**
@@ -89,6 +78,21 @@ public class ProfileFragment extends Fragment {
         headerTitle.setText(R.string.profile_statistics_header);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    }
+
+    /**
+     * Loads the user profile and sets up the task adapter.
+     */
+    private void loadProfile() {
+        CacheManager cacheManager = new CacheManager(requireContext());
+        OperationResponse<User> response = userController.getUserById(cacheManager.getUserId());
+
+        if (response.isSuccessful()) {
+            User user = response.getData();
+            profileName.setText(user.getName());
+        }
+        else
+            Toast.makeText(requireContext(), "Error loading profile", Toast.LENGTH_SHORT).show();
     }
 
     /**
