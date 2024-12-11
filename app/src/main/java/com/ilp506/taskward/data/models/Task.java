@@ -6,7 +6,9 @@ import com.ilp506.taskward.data.enums.TaskFrequencyEnum;
 import com.ilp506.taskward.utils.DateUtils;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a task in the system.
@@ -165,5 +167,19 @@ public class Task {
             throw new IllegalArgumentException("Start date must be now or in the future.");
         if (endDate != null && endDate.isBefore(startDate))
             throw new IllegalArgumentException("End date must be after start date.");
+    }
+
+    /**
+     * Returns a list of completed task events associated with this task.
+     *
+     * @return An unmodifiable list of completed task events.
+     */
+    @NonNull
+    public List<TaskEvent> getCompletedEvents() {
+        if (taskEvents == null)
+            return Collections.emptyList();
+        return taskEvents.stream()
+                .filter(TaskEvent::isCompleted)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 }

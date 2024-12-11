@@ -52,7 +52,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         public void bind(@NonNull Task task) {
             title.setText(task.getTitle());
-            taskEventsDone.setText(String.valueOf(task.getTaskEvents().size()));
+            taskEventsDone.setText(String.valueOf(task.getCompletedEvents().size()));
         }
     }
 }
