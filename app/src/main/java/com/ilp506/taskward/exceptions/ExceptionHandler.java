@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.ilp506.taskward.utils.Logger;
 
-public class ExceptionHandler {
+/**
+ * ExceptionHandler class is responsible for handling and logging exceptions
+ * that occur in the application.
+ */
+public class ExceptionHandler {  // TODO review this handler to use Toast and separation of responsibility
 
     private static final String TAG = ExceptionHandler.class.getSimpleName();
 

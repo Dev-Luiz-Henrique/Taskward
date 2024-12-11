@@ -7,8 +7,7 @@ import androidx.annotation.NonNull;
 
 /**
  * A utility class for managing cached data using SharedPreferences.
- * This class is designed to store and retrieve small amounts of data
- * persistently across app sessions.
+ * This class is designed to store and retrieve small amounts of data persistently across app sessions.
  */
 public class CacheManager {  // TODO SINGLETON
 

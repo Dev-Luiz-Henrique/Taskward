@@ -1,9 +1,19 @@
 package com.ilp506.taskward.data;
 
+/**
+ * Contract class for the TaskWard database.
+ * This class defines the structure of the database, including table names,
+ * column names, and the list of all columns for each table.
+ * It serves as a central reference to avoid hardcoding database details.
+ */
 public final class DatabaseContract {
 
+    // Private constructor to prevent instantiation of this contract class
     private DatabaseContract() {}
 
+    /**
+     * Defines the schema for the 'users' table.
+     */
     public static class UserTable {
         public static final String TABLE_NAME = "users";
         public static final String COLUMN_ID = "id";
@@ -17,6 +27,9 @@ public final class DatabaseContract {
         };
     }
 
+    /**
+     * Defines the schema for the 'rewards' table.
+     */
     public static class RewardTable {
         public static final String TABLE_NAME = "rewards";
         public static final String COLUMN_ID = "id";
@@ -33,6 +46,9 @@ public final class DatabaseContract {
         };
     }
 
+    /**
+     * Defines the schema for the 'tasks' table.
+     */
     public static class TaskTable {
         public static final String TABLE_NAME = "tasks";
         public static final String COLUMN_ID = "id";
@@ -52,6 +68,9 @@ public final class DatabaseContract {
         };
     }
 
+    /**
+     * Defines the schema for the 'task_events' table.
+     */
     public static class TaskEventTable {
         public static final String TABLE_NAME = "task_events";
         public static final String COLUMN_ID = "id";

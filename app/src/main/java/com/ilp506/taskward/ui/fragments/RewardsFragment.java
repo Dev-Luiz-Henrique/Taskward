@@ -144,8 +144,10 @@ public class RewardsFragment extends Fragment {
         }
 
         OperationResponse<Void> redeemResponse = rewardController.redeemReward(reward.getId());
-        if (redeemResponse.isSuccessful())
+        if (redeemResponse.isSuccessful()) {
             updateUserPoints(reward.getUserId());
+            loadRewards(); // TODO refresh rewards list is the best practice?
+        }
         else
             Toast.makeText(requireContext(), "Error redeeming reward", Toast.LENGTH_SHORT).show();
     }

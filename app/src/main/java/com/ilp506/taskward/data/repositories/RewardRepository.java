@@ -195,6 +195,7 @@ public class RewardRepository {
             values.put(RewardTable.COLUMN_TITLE, reward.getTitle());
             values.put(RewardTable.COLUMN_DESCRIPTION, reward.getDescription());
             values.put(RewardTable.COLUMN_POINTS_REQUIRED, reward.getPointsRequired());
+            values.put(RewardTable.COLUMN_DATE_REDEEMED, DateUtils.formatLocalDateTime(reward.getDateRedeemed()));
 
             int rowsUpdated = db.update(RewardTable.TABLE_NAME, values, selection, selectionArgs);
             if (rowsUpdated == 0)
