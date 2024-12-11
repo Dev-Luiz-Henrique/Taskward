@@ -53,4 +53,6 @@
     <string name="create_profile_input_email">enter email</string>
 
     <string name="create_profile_picture_description">Choose an image for your profile picture</string>
+
+    <string name="create_rewards_description">description</string>
 </resources>
