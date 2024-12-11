@@ -3,11 +3,14 @@ package com.ilp506.taskward.controllers;
 import android.content.Context;
 
 import com.ilp506.taskward.data.models.Reward;
+import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.RewardRepository;
+import com.ilp506.taskward.data.repositories.UserRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,14 +20,16 @@ import java.util.List;
  */
 public class RewardController {
     private final RewardRepository rewardRepository;
+    private final UserRepository userRepository;
 
     /**
-     * Constructs a RewardController with a RewardRepository instance.
+     * Constructs a RewardController with a RewardRepository and an UserRepository instance.
      *
      * @param context The application context used to initialize the RewardRepository.
      */
     public RewardController(Context context) {
         this.rewardRepository = new RewardRepository(context);
+        this.userRepository = new UserRepository(context);
     }
 
     /**
@@ -174,6 +179,48 @@ public class RewardController {
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
             return OperationResponse.failure("Unexpected error occurred while deleting reward");
+        }
+    }
+
+    /**
+     * Redeems a reward for a user.
+     *
+     * @param rewardId ID of the reward to redeem.
+     * @return OperationResponse indicating success or failure.
+     */
+    public OperationResponse<Void> redeemReward(int rewardId) {
+        try {
+            validateRewardId(rewardId);
+            Reward existingReward = rewardRepository.getRewardById(rewardId);
+            if (existingReward == null)
+                return OperationResponse.failure("Reward not found");
+
+            if (existingReward.getDateRedeemed() != null)
+                return OperationResponse.failure("Reward already redeemed");
+
+            existingReward.setDateRedeemed(LocalDateTime.now());
+            rewardRepository.updateReward(existingReward);
+
+            // TODO implement error logic for when user is not found
+            User user = userRepository.getUserById(existingReward.getUserId());
+            if (user != null) {
+                user.setPoints(user.getPoints() - existingReward.getPointsRequired());
+                userRepository.updateUser(user);
+            }
+
+            return OperationResponse.success("Reward redeemed successfully");
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Invalid reward ID provided");
+        } catch (DatabaseOperationException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while redeeming reward from the database");
+        } catch (RuntimeException e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Error while redeeming reward");
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return OperationResponse.failure("Unexpected error occurred while redeeming reward");
         }
     }
 }

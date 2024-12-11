@@ -184,6 +184,7 @@ public class TaskEventController {
             event.setCompletedDate(LocalDateTime.now());
             taskEventRepository.updateTaskEvent(event);
 
+            // TODO implement error logic for when user is not found
             User user = userRepository.getUserById(event.getUserId());
             if (user != null) {
                 user.setPoints(user.getPoints() + event.getPointsEarned());

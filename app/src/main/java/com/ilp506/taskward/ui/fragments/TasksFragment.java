@@ -106,6 +106,7 @@ public class TasksFragment extends Fragment {
 
     /**
      * Handles the task status change event.
+     *
      * @param taskEvent The task event
      * @param isChecked Whether the task is checked
      */
@@ -123,6 +124,7 @@ public class TasksFragment extends Fragment {
 
     /**
      * Updates the user points based on the task event.
+     *
      * @param userId The user ID
      */
     private void updateUserPoints(int userId) {
@@ -137,6 +139,7 @@ public class TasksFragment extends Fragment {
 
     /**
      * Sets up the navigation helper for the fragment.
+     *
      * @param view The view of the fragment
      */
     private void setupNavigationHelper(@NonNull View view) {

@@ -17,9 +17,15 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
     private static final String TAG = RewardsAdapter.class.getSimpleName();
 
     private final List<Reward> rewards;
+    private final OnRewardClickListener onRewardClickListener;
 
-    public RewardsAdapter(List<Reward> rewards) {
+    public interface OnRewardClickListener {
+        void onRewardClick(Reward reward);
+    }
+
+    public RewardsAdapter(List<Reward> rewards, OnRewardClickListener onRewardClickListener) {
         this.rewards = rewards;
+        this.onRewardClickListener = onRewardClickListener;
     }
 
     @NonNull
@@ -41,7 +47,7 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
         return rewards.size();
     }
 
-    public static class RewardViewHolder extends RecyclerView.ViewHolder {
+    public class RewardViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
         private final TextView points;
 
@@ -49,6 +55,16 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
             super(itemView);
             title = itemView.findViewById(R.id.rewardTitle);
             points = itemView.findViewById(R.id.rewardPoints);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    if (onRewardClickListener != null) {
+                        Reward reward = rewards.get(position);
+                        onRewardClickListener.onRewardClick(reward);
+                    }
+                }
+            });
         }
 
         public void bind(@NonNull Reward reward) {
