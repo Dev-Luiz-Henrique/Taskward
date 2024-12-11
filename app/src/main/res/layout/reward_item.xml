@@ -5,7 +5,6 @@
     android:layout_width="160dp"
     android:layout_height="140dp"
     android:background="@drawable/rounded_corners"
-    android:backgroundTint="@color/blue_300"
     android:padding="5dp"
     android:layout_marginTop="20dp"
     android:layout_marginLeft="20dp">
@@ -38,15 +37,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/rewardPoints"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@color/blue_500" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/rewardPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/outfit_semibold"
-            android:textColor="@color/blue_500"
             android:textSize="20sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

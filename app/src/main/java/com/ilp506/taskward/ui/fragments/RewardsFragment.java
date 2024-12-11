@@ -109,6 +109,11 @@ public class RewardsFragment extends Fragment {
      * @param reward The clicked reward
      */
     public void onRewardClick(@NonNull Reward reward) {
+        if (reward.isRedeemed()) {
+            Toast.makeText(requireContext(), "Reward already redeemed", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         new AlertDialog.Builder(requireContext())
                 .setTitle("Confirm Redemption")
                 .setMessage("Do you want to redeem " + reward.getTitle() +

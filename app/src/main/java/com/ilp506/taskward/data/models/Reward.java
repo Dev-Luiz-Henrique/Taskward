@@ -126,4 +126,13 @@ public class Reward {
         if (dateRedeemed != null && dateRedeemed.isAfter(LocalDateTime.now()))
             throw new IllegalArgumentException("Date redeemed must be in the present or the past if specified.");
     }
+
+    /**
+     * Checks if the reward has been redeemed.
+     *
+     * @return true if the reward has been redeemed, false otherwise.
+     */
+    public boolean isRedeemed() {
+        return dateRedeemed != null;
+    }
 }

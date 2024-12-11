@@ -1,11 +1,14 @@
 package com.ilp506.taskward.ui.adapters;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ilp506.taskward.R;
@@ -50,11 +53,13 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
     public class RewardViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
         private final TextView points;
+        private final ImageView pointsIcon;
 
         public RewardViewHolder(android.view.View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.rewardTitle);
             points = itemView.findViewById(R.id.rewardPoints);
+            pointsIcon = itemView.findViewById(R.id.rewardPointsIcon);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -70,6 +75,30 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
         public void bind(@NonNull Reward reward) {
             title.setText(reward.getTitle());
             points.setText(String.valueOf(reward.getPointsRequired()));
+            updateRewardAppearance(reward.isRedeemed());
+        }
+
+        private void updateRewardAppearance(boolean isRedeemed) {
+            if (isRedeemed) {
+                itemView.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.gray_500_50))
+                );
+                title.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white_100));
+                points.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white_100));
+                pointsIcon.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.white_100))
+                );
+            }
+            else {
+                itemView.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.blue_300))
+                );
+                title.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.blue_500));
+                points.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.blue_500));
+                pointsIcon.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.blue_500))
+                );
+            }
         }
     }
 }

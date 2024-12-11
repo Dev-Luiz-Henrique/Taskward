@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
  * This class is designed to store and retrieve small amounts of data
  * persistently across app sessions.
  */
-public class CacheManager {
+public class CacheManager {  // TODO SINGLETON
 
     private static final String PREFS_NAME = "user_cache";
 
