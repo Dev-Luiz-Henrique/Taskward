@@ -11,9 +11,9 @@
         style="@style/CustomFormStyle"
         android:backgroundTint="@color/blue_300">
 
-        <!-- Container Profile Picture -->
+        <!-- Container Reward Icon -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutProfilePicture"
+            android:id="@+id/layoutRewardIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -21,10 +21,10 @@
             style="@style/CustomFormContainerStyle">
 
             <ImageButton
-                android:id="@+id/buttonProfilePicture"
+                android:id="@+id/buttonRewardIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/create_profile_picture_description"
+                android:contentDescription="TODO"
                 android:src="@drawable/ic_menu_reward"
                 android:background="@null"
                 android:scaleType="fitCenter"
@@ -35,74 +35,113 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Container Name -->
+        <!-- Container Title -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutProfileName"
-            app:layout_constraintTop_toBottomOf="@id/layoutProfilePicture"
+            android:id="@+id/layoutRewardTitle"
+            app:layout_constraintTop_toBottomOf="@id/layoutRewardIcon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/CustomFormContainerStyle">
 
             <TextView
-                android:id="@+id/textLabelProfileName"
+                android:id="@+id/textLabelRewardTitle"
                 style="@style/CustomFormLabelStyle"
-                android:text="@string/create_profile_name"
+                android:text="@string/create_reward_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
-                android:id="@+id/editProfileName"
+                android:id="@+id/editRewardTitle"
                 style="@style/CustomFormInputBoxStyle"
-                android:autofillHints="name"
-                android:hint="@string/create_profile_input_name"
-                android:inputType="textPersonName"
-                app:layout_constraintTop_toBottomOf="@id/textLabelProfileName"
+                android:hint="@string/create_reward_input_title"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                app:layout_constraintTop_toBottomOf="@id/textLabelRewardTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="LabelFor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Container Description -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutRewardDescription"
+            app:layout_constraintTop_toBottomOf="@id/layoutRewardTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/CustomFormContainerStyle">
+
+            <TextView
+                android:id="@+id/textLabelRewardDescription"
+                style="@style/CustomFormLabelStyle"
+                android:text="@string/create_reward_description"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/editRewardDescription"
+                style="@style/CustomFormInputBoxStyle"
+                android:hint="@string/create_reward_input_description"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:maxLength="255"
+                android:maxLines="3"
+                app:layout_constraintTop_toBottomOf="@id/textLabelRewardDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Container Email -->
+        <!-- Container Points -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutProfileEmail"
-            app:layout_constraintTop_toBottomOf="@id/layoutProfileName"
+            android:id="@+id/layoutRewardPoints"
+            app:layout_constraintTop_toBottomOf="@id/layoutRewardDescription"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/CustomFormContainerStyle">
 
             <TextView
-                android:id="@+id/textLabelProfileEmail"
+                android:id="@+id/textLabelRewardPoints"
                 style="@style/CustomFormLabelStyle"
-                android:text="description"
-                android:labelFor="@id/editTaskDescription"
+                android:text="@string/create_reward_points"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
-                android:id="@+id/editProfileEmail"
+                android:id="@+id/editRewardPoints"
                 style="@style/CustomFormInputBoxStyle"
-                android:hint="@string/create_profile_input_email"
-                android:autofillHints="emailAddress"
-                android:inputType="textEmailAddress"
-                android:maxLength="255"
-                app:layout_constraintTop_toBottomOf="@id/textLabelProfileEmail"
+                android:paddingStart="30dp"
+                android:hint="@string/create_reward_input_points"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                app:layout_constraintTop_toBottomOf="@id/textLabelRewardPoints"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                tools:ignore="RtlSymmetry" />
+
+            <ImageView
+                android:id="@+id/iconEditRewardPoints"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_star"
+                app:layout_constraintTop_toTopOf="@id/editRewardPoints"
+                app:layout_constraintStart_toStartOf="@id/editRewardPoints"
+                app:layout_constraintBottom_toBottomOf="@id/editRewardPoints"
+                app:tint="@color/blue_500" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Container Create -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutCreateProfile"
-            app:layout_constraintTop_toBottomOf="@id/layoutProfileEmail"
+            android:id="@+id/layoutCreateReward"
+            app:layout_constraintTop_toBottomOf="@id/layoutRewardPoints"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/CustomFormContainerStyle">
 
             <ImageButton
-                android:id="@+id/buttonCreateProfile"
+                android:id="@+id/buttonCreateReward"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_plus"
-                android:contentDescription="@string/create_profile"
+                android:contentDescription="@string/create_reward"
                 style="@style/CustomBlueButtonStyle"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

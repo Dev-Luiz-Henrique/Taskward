@@ -8,6 +8,7 @@ import com.ilp506.taskward.data.repositories.RewardRepository;
 import com.ilp506.taskward.data.repositories.UserRepository;
 import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.utils.CacheManager;
 import com.ilp506.taskward.utils.OperationResponse;
 
 import java.time.LocalDateTime;

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,6 @@ import com.ilp506.taskward.data.models.Reward;
 import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.ui.MainActivity;
 import com.ilp506.taskward.ui.adapters.RewardsAdapter;
-import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.NavigationHelper;
 import com.ilp506.taskward.utils.OperationResponse;
 
@@ -38,6 +38,7 @@ public class RewardsFragment extends Fragment {
 
     private TextView headerTitle;
     private RecyclerView recyclerView;
+    private Button createRewardButton;
 
     public RewardsFragment() {
         // Required empty public constructor
@@ -73,6 +74,7 @@ public class RewardsFragment extends Fragment {
     private void initializeUI(@NonNull View view) {
         headerTitle = view.findViewById(R.id.fragmentTitle);
         recyclerView = view.findViewById(R.id.recyclerViewRewards);
+        createRewardButton = view.findViewById(R.id.createRewardButton);
     }
 
     /**
@@ -170,6 +172,9 @@ public class RewardsFragment extends Fragment {
             if (helper != null) {
                 navigationHelper = helper;
                 loadRewards();
+                createRewardButton.setOnClickListener(v ->
+                        navigationHelper.navigateTo(R.id.action_rewardsFragment_to_createRewardsFragment)
+                );
             }
         });
     }

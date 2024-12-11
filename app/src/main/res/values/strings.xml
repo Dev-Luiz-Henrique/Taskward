@@ -45,8 +45,16 @@
     <string name="create_task_input_start_date">select start date</string>
     <string name="create_task_input_end_date">select end date</string>
 
-    <!-- ================== Create Profile Fragment ================== -->
+    <!-- ================== Create Reward Fragment ================== -->
     <string name="create_reward">create reward</string>
+
+    <string name="create_reward_title">title</string>
+    <string name="create_reward_description">description</string>
+    <string name="create_reward_points">points</string>
+
+    <string name="create_reward_input_title">enter reward title</string>
+    <string name="create_reward_input_description">enter reward description</string>
+    <string name="create_reward_input_points">enter reward points required</string>
 
     <!-- ================== Create Profile Fragment ================== -->
     <string name="create_profile">create profile</string>

@@ -22,7 +22,8 @@ import com.ilp506.taskward.utils.OperationResponse;
 
 /**
  * Fragment for creating profiles in the TaskWard app.
- * Handles user input, validations, and profile creation logic.
+ * This fragment allows users to create a new profile by providing their name and email.
+ * It interacts with the UserController to handle the profile creation process and updates the UI accordingly.
  */
 public class CreateProfileFragment extends Fragment {
     private UserController userController;
@@ -84,10 +85,12 @@ public class CreateProfileFragment extends Fragment {
 
         if (TextUtils.isEmpty(name)) {
             Toast.makeText(requireContext(), "Profile name is required", Toast.LENGTH_SHORT).show();
+            editProfileName.setError("Profile name is required");
             return false;
         }
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(requireContext(), "Profile email is required", Toast.LENGTH_SHORT).show();
+            editProfileEmail.setError("Profile email is required");
             return false;
         }
         return true;

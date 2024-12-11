@@ -32,7 +32,8 @@ import java.util.Arrays;
 
 /**
  * Fragment for creating tasks in the TaskWard app.
- * Handles user input, validations, and task creation logic.
+ * This fragment allows users to create a new task by providing task details such as title, description, frequency, and dates.
+ * It interacts with the TaskController to handle the task creation process and updates the UI accordingly.
  */
 public class CreateTaskFragment extends Fragment {
     private TaskController taskController;
@@ -169,18 +170,22 @@ public class CreateTaskFragment extends Fragment {
 
         if (TextUtils.isEmpty(title)) {
             Toast.makeText(requireContext(), "Title is required", Toast.LENGTH_SHORT).show();
+            editTaskTitle.setError("Title is required");
             return false;
         }
         if (TextUtils.isEmpty(frequencyValue) || Integer.parseInt(frequencyValue) <= 0) {
             Toast.makeText(requireContext(), "Frequency value must be greater than 0", Toast.LENGTH_SHORT).show();
+            editTaskFrequencyValue.setError("Frequency value must be greater than 0");
             return false;
         }
         if (TextUtils.isEmpty(startDate)) {
             Toast.makeText(requireContext(), "Start date is required", Toast.LENGTH_SHORT).show();
+            editTaskStartDate.setError("Start date is required");
             return false;
         }
         if (!alwaysRepeat && TextUtils.isEmpty(endDate)) {
             Toast.makeText(requireContext(), "End date is required", Toast.LENGTH_SHORT).show();
+            editTaskEndDate.setError("End date is required");
             return false;
         }
         return true;
@@ -222,7 +227,6 @@ public class CreateTaskFragment extends Fragment {
      */
     private void handleTaskCreation(Task task) {
         OperationResponse<Task> response = taskController.createTask(task);
-
         if (response.isSuccessful()) {
             Toast.makeText(requireContext(), "Task created successfully!", Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();
