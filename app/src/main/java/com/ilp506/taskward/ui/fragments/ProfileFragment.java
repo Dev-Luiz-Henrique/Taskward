@@ -28,7 +28,7 @@ import java.util.List;
  * Fragment for displaying user profiles in the TaskWard app.
  */
 public class ProfileFragment extends Fragment {
-    private UserController userController;
+    private UserController userController; // TODO Implement logic for user profile data view
     private TaskController taskController;
 
     private TextView headerTitle;
@@ -53,22 +53,6 @@ public class ProfileFragment extends Fragment {
         initializeUI(view);
         setupComponents();
         loadTasks();
-
-        OperationResponse<List<Task>> response = taskController.getAllTasksWithTaskEvents();
-        if (response.isSuccessful()) {
-            List<Task> tasks = response.getData();
-            if (tasks != null && !tasks.isEmpty()) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                TaskAdapter adapter = new TaskAdapter(tasks);
-                recyclerView.setAdapter(adapter);
-            } else {
-                Logger.e("ProfileFragment", "Task list is null or empty.");
-            }
-
-
-        } else {
-            System.out.println(response.getMessage());
-        }
         return view;
     }
 
