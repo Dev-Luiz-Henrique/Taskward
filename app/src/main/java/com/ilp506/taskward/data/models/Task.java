@@ -8,6 +8,7 @@ import com.ilp506.taskward.utils.DateUtils;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -28,7 +29,7 @@ public class Task {
     private List<TaskEvent> taskEvents;
 
     /**
-     * Constructs a new Task object with the current timestamp as the creation and start time.
+     * Constructs a new Task object, setting the creation time to the current date and time.
      */
     public Task() {
         this.createdAt = LocalDateTime.now();
@@ -141,6 +142,40 @@ public class Task {
                 ", pointsReward=" + pointsReward +
                 ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
+    }
+
+    /**
+     * Checks if the current Task object is equal to another object.
+     *
+     * @param o The object to compare with.
+     * @return true if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id &&
+                pointsReward == task.pointsReward &&
+                Objects.equals(icon, task.icon) &&
+                Objects.equals(title, task.title) &&
+                Objects.equals(description, task.description) &&
+                frequency == task.frequency &&
+                frequencyInterval == task.frequencyInterval &&
+                Objects.equals(startDate, task.startDate) &&
+                Objects.equals(endDate, task.endDate) &&
+                Objects.equals(taskEvents, task.taskEvents);
+    }
+
+    /**
+     * Returns a hash code value for the Task object.
+     *
+     * @return The hash code value.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, icon, title, description, frequency, frequencyInterval,
+                startDate, endDate, pointsReward, taskEvents);
     }
 
     /**

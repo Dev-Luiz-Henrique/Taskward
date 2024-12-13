@@ -8,6 +8,7 @@ import com.ilp506.taskward.utils.DateUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Represents a task event in the application.
@@ -26,7 +27,7 @@ public class TaskEvent {
     private String title;
 
     /**
-     * Constructs a new TaskEvent object with the current time as the creation timestamp.
+     * Constructs a new TaskEvent object with the current time.
      * The status is set to SCHEDULED by default.
      */
     public TaskEvent() {
@@ -124,9 +125,35 @@ public class TaskEvent {
                 " }";
     }
 
+    /**
+     * Checks if the current TaskEvent object is equal to another object.
+     *
+     * @param o The object to compare with.
+     * @return true if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskEvent taskEvent = (TaskEvent) o;
+        return id == taskEvent.id &&
+                userId == taskEvent.userId &&
+                taskId == taskEvent.taskId &&
+                pointsEarned == taskEvent.pointsEarned &&
+                Objects.equals(scheduledDate, taskEvent.scheduledDate) &&
+                Objects.equals(completedDate, taskEvent.completedDate) &&
+                Objects.equals(title, taskEvent.title) &&
+                status == taskEvent.status;
+    }
 
-    private String formatLocalDateTime(LocalDateTime dateTime, DateTimeFormatter formatter) {
-        return dateTime != null ? dateTime.format(formatter) : "null";
+    /**
+     * Returns a hash code value for the TaskEvent object.
+     *
+     * @return The hash code value.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, taskId, scheduledDate, completedDate, pointsEarned, status);
     }
 
     /**

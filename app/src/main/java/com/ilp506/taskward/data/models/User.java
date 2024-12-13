@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.ilp506.taskward.utils.DateUtils;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Represents a user in the system.
@@ -20,7 +21,7 @@ public class User {
     private LocalDateTime createdAt;
 
     /**
-     * Constructs a new User object with the current timestamp as the creation time.
+     * Constructs a new User object, setting the creation time to the current date and time.
      */
     public User() {
         this.createdAt = LocalDateTime.now();
@@ -91,6 +92,34 @@ public class User {
                 ", points=" + points +
                 ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
+    }
+
+    /**
+     * Checks if the current User object is equal to another object.
+     *
+     * @param o The object to compare with.
+     * @return true if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                points == user.points &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(photo, user.photo);
+    }
+
+    /**
+     * Returns a hash code value for the User object.
+     *
+     * @return The hash code value.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, photo, points);
     }
 
     /**

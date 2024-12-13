@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.ilp506.taskward.utils.DateUtils;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Represents a reward in the system.
@@ -21,7 +22,7 @@ public class Reward {
     private LocalDateTime createdAt;
 
     /**
-     * Constructs a new Reward object with the current timestamp as the creation time.
+     * Constructs a new Reward object, setting the creation time to the current date and time.
      */
     public Reward() {
         this.createdAt = LocalDateTime.now();
@@ -107,6 +108,35 @@ public class Reward {
                 ", dateRedeemed=" + DateUtils.formatLocalDateTime(dateRedeemed) +
                 ", createdAt=" + DateUtils.formatLocalDateTime(createdAt) +
                 " }";
+    }
+
+    /**
+     * Checks if the current Reward object is equal to another object.
+     *
+     * @param o The object to compare with.
+     * @return true if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reward reward = (Reward) o;
+        return id == reward.id &&
+                pointsRequired == reward.pointsRequired &&
+                Objects.equals(icon, reward.icon) &&
+                Objects.equals(title, reward.title) &&
+                Objects.equals(description, reward.description) &&
+                Objects.equals(dateRedeemed, reward.dateRedeemed);
+    }
+
+    /**
+     * Returns a hash code value for the Reward object.
+     *
+     * @return The hash code value.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, icon, title, description, pointsRequired, dateRedeemed);
     }
 
     /**
