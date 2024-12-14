@@ -10,11 +10,17 @@ import com.ilp506.taskward.exceptions.custom.DatabaseOperationException;
 public enum DatabaseErrorCode {
 
     QUERY_FAILURE("DB001", "Failed to execute the database query."),
-
     CONNECTION_FAILURE("DB002", "Database connection failure."),
-
     DATA_INTEGRITY_VIOLATION("DB003", "Data integrity violation."),
-
+    RESOURCE_NOT_FOUND("DB004", "Requested resource not found in the database."),
+    DUPLICATE_RESOURCE("DB005", "Duplicate resource error."),
+    INVALID_QUERY_SYNTAX("DB006", "Invalid query syntax."),
+    PERMISSION_DENIED("DB007", "Permission denied for database operation."),
+    TRANSACTION_FAILURE("DB008", "Transaction failure."),
+    CONNECTION_TIMEOUT("DB009", "Database connection timeout."),
+    SCHEMA_MISMATCH("DB010", "Database schema mismatch."),
+    OPERATION_NOT_SUPPORTED("DB011", "Operation not supported by the database."),
+    ENCRYPTION_ERROR("DB012", "Database encryption error."),
     UNEXPECTED_ERROR("DB999", "Unexpected database error.");
 
     /**

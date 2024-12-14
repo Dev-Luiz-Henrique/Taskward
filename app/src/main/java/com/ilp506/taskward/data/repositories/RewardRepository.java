@@ -43,7 +43,7 @@ public class RewardRepository {
      *
      * @param cursor The cursor containing the queried data.
      * @return A Reward instance populated with the cursor's data.
-     * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
+     * @throws DatabaseOperationException If an error occurs during the mapping process.
      */
     protected Reward mapCursorToReward(Cursor cursor) {
         Reward reward = new Reward();
@@ -62,7 +62,11 @@ public class RewardRepository {
             ));
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to Reward: " + e.getMessage(), e);
-            throw new RuntimeException("Error mapping cursor to Reward: " + e.getMessage(), e);
+            throw DatabaseOperationException.fromError(
+                    DatabaseErrorCode.UNEXPECTED_ERROR,
+                    "Error mapping cursor to Reward.",
+                    e
+            );
         }
         return reward;
     }
@@ -88,7 +92,7 @@ public class RewardRepository {
                 Logger.e(TAG, "Failed to insert new reward");
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.QUERY_FAILURE,
-                        "Failed to insert reward into the database."
+                        "Failed to insert new reward."
                 );
             }
             return getRewardById((int) newId);
@@ -155,8 +159,8 @@ public class RewardRepository {
             else {
                 Logger.w(TAG, "Reward not found with ID: " + rewardId);
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
-                        String.format("Reward with ID %d not found.", rewardId)
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
+                        String.format("Reward not found with ID %d.", rewardId)
                 );
             }
         } catch (SQLiteException e) {
@@ -190,7 +194,7 @@ public class RewardRepository {
             if (rowsUpdated == 0) {
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
-                        "No rows updated. Reward not found."
+                        String.format("Failed to update reward with ID %d. Reward not found.", reward.getId())
                 );
             }
             return getRewardById(reward.getId());
@@ -215,7 +219,7 @@ public class RewardRepository {
             int rowsDeleted = db.delete(RewardTable.TABLE_NAME, selection, selectionArgs);
             if (rowsDeleted == 0) {
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
                         String.format("Failed to delete reward with ID %d. Reward not found.", rewardId)
                 );
             }

@@ -17,6 +17,8 @@ import com.ilp506.taskward.exceptions.handlers.DatabaseErrorHandler;
 import com.ilp506.taskward.utils.DateUtils;
 import com.ilp506.taskward.utils.Logger;
 
+import java.util.Objects;
+
 /**
  * Repository class responsible for managing database operations related to the User model.
  * This class performs CRUD operations for the User model in the local SQLite database.
@@ -40,9 +42,9 @@ public class UserRepository {
      *
      * @param cursor The cursor containing the queried data.
      * @return A User instance populated with the cursor's data.
-     * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
+     * @throws DatabaseOperationException If an error occurs during the mapping process.
      */
-    protected User mapCursorToUser(Cursor cursor) {
+    protected User mapCursorToUser(@NonNull Cursor cursor) {
         User user = new User();
         try {
             user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(UserTable.COLUMN_ID)));
@@ -55,7 +57,11 @@ public class UserRepository {
             ));
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to User: " + e.getMessage(), e);
-            throw new RuntimeException("Error mapping cursor to User: " + e.getMessage(), e);
+            throw DatabaseOperationException.fromError(
+                    DatabaseErrorCode.UNEXPECTED_ERROR,
+                    "Error mapping cursor to User.",
+                    e
+            );
         }
         return user;
     }
@@ -79,7 +85,7 @@ public class UserRepository {
                 Logger.e(TAG, "Failed to insert new user");
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.QUERY_FAILURE,
-                        "Failed to insert user into the database."
+                        "Failed to insert new user."
                 );
             }
             return getUserById((int) newId);
@@ -116,8 +122,8 @@ public class UserRepository {
             else {
                 Logger.w(TAG, "User not found with ID: " + userId);
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
-                        String.format("User with ID %d not found.", userId)
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
+                        String.format("User not found with ID %d.", userId)
                 );
             }
         } catch (SQLiteException e) {
@@ -135,6 +141,7 @@ public class UserRepository {
      * @throws DatabaseOperationException If an error occurs during the database operation or if the user is not found.
      */
     public User updateUser(@NonNull User user) {
+        Objects.requireNonNull(user, "User cannot be null.");
         final String selection = UserTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(user.getId())};
 
@@ -149,7 +156,7 @@ public class UserRepository {
             if (rowsUpdated == 0) {
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
-                        "No rows updated. User not found."
+                        String.format("Failed to update user with ID %d. User not found.", user.getId())
                 );
             }
             return getUserById(user.getId());
@@ -174,7 +181,7 @@ public class UserRepository {
             int rowsDeleted = db.delete(UserTable.TABLE_NAME, selection, selectionArgs);
             if (rowsDeleted == 0) {
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
                         String.format("Failed to delete user with ID %d. User not found.", userId)
                 );
             }

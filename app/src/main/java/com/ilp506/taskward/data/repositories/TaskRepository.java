@@ -44,7 +44,7 @@ public class TaskRepository {
      *
      * @param cursor The cursor containing the queried data.
      * @return A Task instance populated with the cursor's data.
-     * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
+     * @throws DatabaseOperationException If an error occurs during the mapping process.
      */
     protected Task mapCursorToTask(Cursor cursor) {
         Task task = new Task();
@@ -69,7 +69,11 @@ public class TaskRepository {
             );
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to Task: " + e.getMessage(), e);
-            throw new RuntimeException("Error mapping cursor to Task: " + e.getMessage(), e);
+            throw DatabaseOperationException.fromError(
+                    DatabaseErrorCode.UNEXPECTED_ERROR,
+                    "Error mapping cursor to Task.",
+                    e
+            );
         }
         return task;
     }
@@ -162,8 +166,8 @@ public class TaskRepository {
                 return mapCursorToTask(cursor);
             else {
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
-                        String.format("Task with ID %d not found.", taskId)
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
+                        String.format("Task not found with ID %d.", taskId)
                 );
             }
         } catch (SQLiteException e) {
@@ -199,7 +203,7 @@ public class TaskRepository {
             if (rowsUpdated == 0) {
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
-                        "No rows updated. Task not found."
+                        String.format("Failed to update task with ID %d. Task not found.", task.getId())
                 );
             }
             return getTaskById(task.getId());
@@ -224,7 +228,7 @@ public class TaskRepository {
             int rowsDeleted = db.delete(TaskTable.TABLE_NAME, selection, selectionArgs);
             if (rowsDeleted == 0) {
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
                         String.format("Failed to delete task with ID %d. Task not found.", taskId)
                 );
             }

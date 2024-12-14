@@ -45,7 +45,7 @@ public class TaskEventRepository {
      *
      * @param cursor The cursor containing the queried data.
      * @return A TaskEvent instance populated with the cursor's data.
-     * @throws RuntimeException If an error occurs during cursor mapping.
+     * @throws DatabaseOperationException If an error occurs during the mapping process.
      */
     protected TaskEvent mapCursorToTaskEvent(Cursor cursor) {
         TaskEvent taskEvent = new TaskEvent();
@@ -72,7 +72,11 @@ public class TaskEventRepository {
 
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to TaskEvent: " + e.getMessage(), e);
-            throw new RuntimeException("Error mapping cursor to TaskEvent: " + e.getMessage(), e);
+            throw DatabaseOperationException.fromError(
+                    DatabaseErrorCode.UNEXPECTED_ERROR,
+                    "Error mapping cursor to TaskEvent.",
+                    e
+            );
         }
         return taskEvent;
     }
@@ -99,7 +103,7 @@ public class TaskEventRepository {
             if (newId == -1) {
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.QUERY_FAILURE,
-                        "Failed to insert TaskEvent into the database."
+                        "Failed to insert new TaskEvent."
                 );
             }
             return getTaskEventById((int) newId);
@@ -176,14 +180,14 @@ public class TaskEventRepository {
             if (cursor.moveToFirst())
                 return mapCursorToTaskEvent(cursor);
             else {
+                Logger.w(TAG, "TaskEvent not found with ID: " + taskEventId);
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
-                        String.format("TaskEvent with ID %d not found.", taskEventId)
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
+                        String.format("TaskEvent not found with ID %d.", taskEventId)
                 );
             }
         } catch (SQLiteException e) {
-            throw DatabaseErrorHandler.handleSQLiteException(
-                    e,
+            throw DatabaseErrorHandler.handleSQLiteException(e,
                     String.format("Error retrieving TaskEvent with ID %d.", taskEventId)
             );
         }
@@ -214,7 +218,7 @@ public class TaskEventRepository {
             if (rowsUpdated == 0) {
                 throw DatabaseOperationException.fromError(
                         DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
-                        "No rows updated. TaskEvent not found."
+                        String.format("Failed to update TaskEvent with ID %d. TaskEvent not found.", taskEvent.getId())
                 );
             }
             return getTaskEventById(taskEvent.getId());
@@ -239,7 +243,7 @@ public class TaskEventRepository {
             int rowsDeleted = db.delete(TaskEventTable.TABLE_NAME, selection, selectionArgs);
             if (rowsDeleted == 0) {
                 throw DatabaseOperationException.fromError(
-                        DatabaseErrorCode.QUERY_FAILURE,
+                        DatabaseErrorCode.RESOURCE_NOT_FOUND,
                         String.format("Failed to delete TaskEvent with ID %d. TaskEvent not found.", taskEventId)
                 );
             }
