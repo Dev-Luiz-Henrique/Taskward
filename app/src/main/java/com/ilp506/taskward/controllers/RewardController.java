@@ -6,10 +6,7 @@ import com.ilp506.taskward.data.models.Reward;
 import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.RewardRepository;
 import com.ilp506.taskward.data.repositories.UserRepository;
-import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
-import com.ilp506.taskward.utils.CacheManager;
-import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.OperationResponse;
 
 import java.time.LocalDateTime;
@@ -21,15 +18,17 @@ import java.util.List;
  * while handling errors and returning structured responses.
  */
 public class RewardController {
+    private final ExceptionHandler exceptionHandler;
     private final RewardRepository rewardRepository;
     private final UserRepository userRepository;
 
     /**
-     * Constructs a RewardController with a RewardRepository and an UserRepository instance.
+     * Constructs a RewardController with a RewardRepository and a UserRepository instance.
      *
-     * @param context The application context used to initialize the RewardRepository.
+     * @param context The application context used to initialize the repositories.
      */
     public RewardController(Context context) {
+        this.exceptionHandler = ExceptionHandler.getInstance();
         this.rewardRepository = new RewardRepository(context);
         this.userRepository = new UserRepository(context);
     }
@@ -53,21 +52,11 @@ public class RewardController {
     public OperationResponse<Reward> createReward(Reward reward) {
         try {
             reward.validate();
-
             Reward createdReward = rewardRepository.createReward(reward);
+
             return OperationResponse.success("Reward created successfully", createdReward);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid reward data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating reward in the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating reward");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while creating reward");
+            return exceptionHandler.handleException(e, "Failed to create reward.");
         }
     }
 
@@ -83,15 +72,8 @@ public class RewardController {
                 return OperationResponse.failure("No rewards found.");
 
             return OperationResponse.success("Rewards retrieved successfully", rewards);
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving rewards from the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving rewards");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while retrieving rewards");
+            return exceptionHandler.handleException(e, "Failed to retrieve rewards.");
         }
     }
 
@@ -104,20 +86,14 @@ public class RewardController {
     public OperationResponse<Reward> getRewardById(int rewardId) {
         try {
             validateRewardId(rewardId);
+
             Reward reward = rewardRepository.getRewardById(rewardId);
             if (reward == null)
-                return OperationResponse.failure("Reward not found");
+                return OperationResponse.failure("Reward not found.");
 
             return OperationResponse.success("Reward retrieved successfully", reward);
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving reward from the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving reward");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while retrieving reward");
+            return exceptionHandler.handleException(e, "Failed to retrieve reward.");
         }
     }
 
@@ -130,26 +106,16 @@ public class RewardController {
     public OperationResponse<Reward> updateReward(Reward reward) {
         try {
             validateRewardId(reward.getId());
+            reward.validate();
+
             Reward existingReward = rewardRepository.getRewardById(reward.getId());
             if (existingReward == null)
-                return OperationResponse.failure("Reward not found");
-
-            reward.validate();
+                return OperationResponse.failure("Reward not found.");
 
             Reward updatedReward = rewardRepository.updateReward(reward);
             return OperationResponse.success("Reward updated successfully", updatedReward);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid reward data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating reward in the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating reward");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while updating reward");
+            return exceptionHandler.handleException(e, "Failed to update reward.");
         }
     }
 
@@ -164,23 +130,12 @@ public class RewardController {
             validateRewardId(rewardId);
             Reward existingReward = rewardRepository.getRewardById(rewardId);
             if (existingReward == null)
-                return OperationResponse.failure("Reward not found");
+                return OperationResponse.failure("Reward not found.");
 
             rewardRepository.deleteReward(rewardId);
-
-            return OperationResponse.success("Reward deleted successfully");
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid reward ID provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while deleting reward from the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while deleting reward");
+            return OperationResponse.success("Reward deleted successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while deleting reward");
+            return exceptionHandler.handleException(e, "Failed to delete reward.");
         }
     }
 
@@ -193,36 +148,27 @@ public class RewardController {
     public OperationResponse<Void> redeemReward(int rewardId) {
         try {
             validateRewardId(rewardId);
+
             Reward existingReward = rewardRepository.getRewardById(rewardId);
             if (existingReward == null)
-                return OperationResponse.failure("Reward not found");
+                return OperationResponse.failure("Reward not found.");
 
             if (existingReward.getDateRedeemed() != null)
-                return OperationResponse.failure("Reward already redeemed");
+                return OperationResponse.failure("Reward already redeemed.");
 
             existingReward.setDateRedeemed(LocalDateTime.now());
             rewardRepository.updateReward(existingReward);
 
-            // TODO implement error logic for when user is not found
             User user = userRepository.getUserById(existingReward.getUserId());
-            if (user != null) {
-                user.setPoints(user.getPoints() - existingReward.getPointsRequired());
-                userRepository.updateUser(user);
-            }
+            if (user == null)
+                return OperationResponse.failure("User not found for the reward.");
 
-            return OperationResponse.success("Reward redeemed successfully");
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid reward ID provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while redeeming reward from the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while redeeming reward");
+            user.setPoints(user.getPoints() - existingReward.getPointsRequired());
+            userRepository.updateUser(user);
+
+            return OperationResponse.success("Reward redeemed successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while redeeming reward");
+            return exceptionHandler.handleException(e, "Failed to redeem reward.");
         }
     }
 }

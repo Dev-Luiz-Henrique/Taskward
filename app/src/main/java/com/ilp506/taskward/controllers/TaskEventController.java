@@ -9,62 +9,57 @@ import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.TaskEventRepository;
 import com.ilp506.taskward.data.repositories.TaskRepository;
 import com.ilp506.taskward.data.repositories.UserRepository;
-import com.ilp506.taskward.exceptions.DatabaseOperationException;
 import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
 import com.ilp506.taskward.utils.TaskScheduler;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Controller class responsible for managing TaskEvent operations.
+ * This class interacts with the TaskEventRepository to perform database operations
+ * while handling errors and returning structured responses.
+ */
 public class TaskEventController {
+    private final ExceptionHandler exceptionHandler;
     private final TaskEventRepository taskEventRepository;
     private final TaskRepository taskRepository;
-    private final UserRepository  userRepository;
+    private final UserRepository userRepository;
 
     /**
-     * Constructs a TaskEventController with a TaskEventRepository instance.
+     * Constructs a TaskEventController with repository instances.
      *
-     * @param context The application context used to initialize the TaskEventRepository.
+     * @param context The application context used to initialize the repositories.
      */
     public TaskEventController(Context context) {
+        this.exceptionHandler = ExceptionHandler.getInstance();
         this.taskEventRepository = new TaskEventRepository(context);
         this.taskRepository = new TaskRepository(context);
         this.userRepository = new UserRepository(context);
     }
 
     /**
-     * Creates a new task event and schedules the next event if applicable.
+     * Creates a new TaskEvent and returns the created instance.
      *
      * @param taskEvent The TaskEvent instance to be created.
-     * @return OperationResponse containing the created task event or failure message.
+     * @return OperationResponse containing the created TaskEvent or failure message.
      */
     public OperationResponse<TaskEvent> createTaskEvent(TaskEvent taskEvent) {
         try {
             taskEvent.validate();
-
             TaskEvent createdTaskEvent = taskEventRepository.createTaskEvent(taskEvent);
+
             return OperationResponse.success("Task event created successfully", createdTaskEvent);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid task event data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating task event in the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating task event");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while creating task event");
+            return exceptionHandler.handleException(e, "Failed to create task event.");
         }
     }
 
     /**
-     * Retrieves all task events.
+     * Retrieves all TaskEvents.
      *
-     * @return OperationResponse containing the list of task events or failure message.
+     * @return OperationResponse containing the list of TaskEvents or failure message.
      */
     public OperationResponse<List<TaskEvent>> getAllTaskEvents() {
         try {
@@ -73,100 +68,71 @@ public class TaskEventController {
                 return OperationResponse.failure("No task events found.");
 
             return OperationResponse.success("Task events retrieved successfully", taskEvents);
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving task events from the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving task events");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while retrieving task events");
+            return exceptionHandler.handleException(e, "Failed to retrieve task events.");
         }
     }
 
     /**
-     * Retrieves a task event by its ID.
+     * Retrieves a TaskEvent by its ID.
      *
-     * @param taskEventId The ID of the task event to retrieve.
-     * @return OperationResponse containing the task event or failure message.
+     * @param taskEventId The ID of the TaskEvent to retrieve.
+     * @return OperationResponse containing the TaskEvent or failure message.
      */
     public OperationResponse<TaskEvent> getTaskEventById(int taskEventId) {
         try {
             TaskEvent taskEvent = taskEventRepository.getTaskEventById(taskEventId);
             if (taskEvent == null)
-                return OperationResponse.failure("Task event not found");
+                return OperationResponse.failure("Task event not found.");
 
             return OperationResponse.success("Task event retrieved successfully", taskEvent);
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving task event from the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving task event");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while retrieving task event");
+            return exceptionHandler.handleException(e, "Failed to retrieve task event.");
         }
     }
 
     /**
-     * Updates an existing task event.
+     * Updates an existing TaskEvent.
      *
      * @param taskEvent The TaskEvent instance containing updated details.
-     * @return OperationResponse indicating success or failure.
+     * @return OperationResponse containing the updated TaskEvent or failure message.
      */
     public OperationResponse<TaskEvent> updateTaskEvent(TaskEvent taskEvent) {
         try {
+            taskEvent.validate();
+
             TaskEvent existingTaskEvent = taskEventRepository.getTaskEventById(taskEvent.getId());
             if (existingTaskEvent == null)
-                return OperationResponse.failure("Task event not found");
-
-            taskEvent.validate();
+                return OperationResponse.failure("Task event not found.");
 
             TaskEvent updatedTaskEvent = taskEventRepository.updateTaskEvent(taskEvent);
             return OperationResponse.success("Task event updated successfully", updatedTaskEvent);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid task event data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating task event in the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating task event");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while updating task event");
+            return exceptionHandler.handleException(e, "Failed to update task event.");
         }
     }
 
     /**
-     * Deletes a task event by its ID.
+     * Deletes a TaskEvent by its ID.
      *
-     * @param taskEventId The ID of the task event to delete.
+     * @param taskEventId The ID of the TaskEvent to delete.
      * @return OperationResponse indicating success or failure.
      */
     public OperationResponse<Void> deleteTaskEvent(int taskEventId) {
         try {
             TaskEvent existingTaskEvent = taskEventRepository.getTaskEventById(taskEventId);
             if (existingTaskEvent == null)
-                return OperationResponse.failure("Task event not found");
+                return OperationResponse.failure("Task event not found.");
 
             taskEventRepository.deleteTaskEvent(taskEventId);
-
-            return OperationResponse.success("Task event deleted successfully");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while deleting task event from the database");
+            return OperationResponse.success("Task event deleted successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while deleting task event");
+            return exceptionHandler.handleException(e, "Failed to delete task event.");
         }
     }
 
     /**
-     * Completes a TaskEvent and generates the next instance, if applicable.
+     * Completes a TaskEvent and schedules the next instance if applicable.
      *
      * @param taskEventId The ID of the TaskEvent to complete.
      * @return OperationResponse indicating success or failure.
@@ -175,10 +141,10 @@ public class TaskEventController {
         try {
             TaskEvent event = taskEventRepository.getTaskEventById(taskEventId);
             if (event == null)
-                return OperationResponse.failure("Task event not found");
+                return OperationResponse.failure("Task event not found.");
 
             if (event.getStatus() != TaskEventStatusEnum.SCHEDULED)
-                return OperationResponse.failure("Task event is not scheduled");
+                return OperationResponse.failure("Task event is not scheduled.");
 
             event.setStatus(TaskEventStatusEnum.COMPLETED);
             event.setCompletedDate(LocalDateTime.now());
@@ -198,16 +164,9 @@ public class TaskEventController {
                 // TODO implement logic for completed Task
             }
 
-            return OperationResponse.success("Task event completed successfully");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while completing task event in the database");
-        } catch (RuntimeException e){
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while completing task event");
+            return OperationResponse.success("Task event completed successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while completing task event");
+            return exceptionHandler.handleException(e, "Failed to complete task event.");
         }
     }
 
@@ -221,10 +180,10 @@ public class TaskEventController {
         try {
             TaskEvent event = taskEventRepository.getTaskEventById(taskEventId);
             if (event == null)
-                return OperationResponse.failure("Task event not found");
+                return OperationResponse.failure("Task event not found.");
 
             if (event.getStatus() != TaskEventStatusEnum.COMPLETED)
-                return OperationResponse.failure("Task event is not marked as completed");
+                return OperationResponse.failure("Task event is not marked as completed.");
 
             event.setStatus(TaskEventStatusEnum.SCHEDULED);
             event.setCompletedDate(null);
@@ -239,25 +198,19 @@ public class TaskEventController {
             Task task = taskRepository.getTaskById(event.getTaskId());
             if (task != null) {
                 TaskEvent nextEvent = taskEventRepository.getNextTaskEvent(event);
-                if (nextEvent != null && nextEvent.getStatus() == TaskEventStatusEnum.SCHEDULED)
+                if (nextEvent != null && nextEvent.getStatus() == TaskEventStatusEnum.SCHEDULED) {
                     taskEventRepository.deleteTaskEvent(nextEvent.getId());
+                }
             }
 
-            return OperationResponse.success("Task event completion reverted successfully");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while reverting task event completion in the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while reverting task event completion");
+            return OperationResponse.success("Task event completion reverted successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while reverting task event completion");
+            return exceptionHandler.handleException(e, "Failed to revert task event completion.");
         }
     }
 
     /**
-     * Checks and processes expired TaskEvents, generating the next instances if necessary.
+     * Processes expired TaskEvents and generates the next instances if applicable.
      *
      * @return OperationResponse indicating the result of the operation.
      */
@@ -268,7 +221,6 @@ public class TaskEventController {
 
             for (TaskEvent event : pendingEvents) {
                 if (event.getScheduledDate().isBefore(now) && event.getStatus() == TaskEventStatusEnum.SCHEDULED) {
-
                     event.setStatus(TaskEventStatusEnum.EXPIRED);
                     taskEventRepository.updateTaskEvent(event);
 
@@ -276,21 +228,14 @@ public class TaskEventController {
                     if (task != null) {
                         TaskEvent nextEvent = TaskScheduler.generateNextTaskEvent(task, event);
                         if (nextEvent != null) taskEventRepository.createTaskEvent(nextEvent);
-                        // TODO implement logic for completed Task
+                            // TODO implement logic for completed Task
                     }
                 }
             }
 
-            return OperationResponse.success("Expired events processed successfully");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while processing expired task events in the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while processing expired task events");
+            return OperationResponse.success("Expired events processed successfully.");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while processing expired task events");
+            return exceptionHandler.handleException(e, "Failed to process expired task events.");
         }
     }
 }

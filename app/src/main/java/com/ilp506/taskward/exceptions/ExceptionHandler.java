@@ -3,30 +3,82 @@ package com.ilp506.taskward.exceptions;
 import androidx.annotation.NonNull;
 
 import com.ilp506.taskward.utils.Logger;
+import com.ilp506.taskward.utils.OperationResponse;
 
 /**
- * ExceptionHandler class is responsible for handling and logging exceptions
- * that occur in the application.
+ * ExceptionHandler is responsible for handling various exceptions throughout the application.
+ * It provides a mechanism to log exceptions and notify users through a registered ErrorNotifier.
  */
-public class ExceptionHandler {  // TODO review this handler to use Toast and separation of responsibility
+public class ExceptionHandler {
 
     private static final String TAG = ExceptionHandler.class.getSimpleName();
 
+    private static ExceptionHandler instance;
+    private ErrorNotifier errorNotifier;
+
     /**
-     * Handles an exception by logging its details and reporting to external services.
-     *
-     * @param e The exception to handle.
+     * Private constructor to enforce Singleton pattern.
      */
-    public static void handleException(@NonNull Exception e) {
-        Logger.e(TAG, e.getMessage(), e);
+    private ExceptionHandler() {}
+
+    /**
+     * Returns the singleton instance of ExceptionHandler.
+     *
+     * @return the singleton instance of ExceptionHandler.
+     */
+    public static synchronized ExceptionHandler getInstance() {
+        if (instance == null)
+            instance = new ExceptionHandler();
+        return instance;
     }
 
     /**
-     * Handles an unknown error.
+     * Sets the ErrorNotifier to be used for notifying user-facing error messages.
      *
-     * @param message A custom message describing the error.
+     * @param errorNotifier the ErrorNotifier instance.
      */
-    public static void handleUnknownError(@NonNull String message) {
-        Logger.e(TAG, "Unknown error occurred: " + message);
+    public void setErrorNotifier(@NonNull ErrorNotifier errorNotifier) {
+        this.errorNotifier = errorNotifier;
+    }
+
+    /**
+     * Handles the provided exception and generates an appropriate OperationResponse.
+     *
+     * @param e the exception to handle.
+     * @param userMessage a user-friendly message describing the error.
+     * @param <T> the type of the result associated with the operation.
+     * @return the OperationResponse indicating failure along with the userMessage.
+     */
+    public <T> OperationResponse<T> handleException(Exception e, String userMessage) {
+        logException(e, userMessage);
+        if (errorNotifier != null)
+            errorNotifier.notify(userMessage);
+
+        return OperationResponse.failure(userMessage);
+    }
+
+    /**
+     * Logs the exception based on its type and message.
+     *
+     * @param e the exception to log.
+     * @param userMessage a user-friendly message describing the error.
+     */
+    private void logException(Exception e, String userMessage) {
+        if (e instanceof DatabaseOperationException) {
+            Logger.e(TAG, "Database error: " + e.getMessage(), e);
+        } else if (e instanceof IllegalArgumentException) {
+            Logger.e(TAG, "Invalid input: " + e.getMessage(), e);
+        } else if (e instanceof RuntimeException) {
+            Logger.e(TAG, "Runtime error: " + e.getMessage(), e);
+        } else {
+            Logger.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Interface for notifying user-facing errors.
+     */
+    public interface ErrorNotifier {
+        void notify(String message);
     }
 }

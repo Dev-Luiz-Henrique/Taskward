@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.controllers.UserController;
 import com.ilp506.taskward.data.models.User;
+import com.ilp506.taskward.exceptions.ExceptionHandler;
 import com.ilp506.taskward.utils.CacheManager;
 import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.NavigationHelper;
@@ -41,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        ExceptionHandler.getInstance().setErrorNotifier(message ->
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        );
+
         initializeUI();
         findViewById(R.id.nav_host_fragment).post(this::initializeNavigation);
     }
 
     /**
-     * Initializes the UI components and sets up the navigation helper.
+     * Initializes the UI components and sets up window insets for edge-to-edge display.
      */
     private void initializeUI() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Initializes the navigation helper and sets up the components and observers.
+     * Initializes the navigation helper and sets up components and observers.
      */
     private void initializeNavigation() {
         navigationHelper = new NavigationHelper(this);
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets up the components and observers for the navigation helper.
+     * Configures the toolbar and bottom navigation, and observes points updates.
      */
     private void setupComponents() {
         navigationHelper.setupBottomNavigationView(bottomNavigationView);
@@ -83,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     /**
-     * Loads the user and initializes the points.
+     * Loads the user from cache and initializes their points.
+     * If the user is not found, navigates to the profile creation screen.
      */
     private void loadUserAndInitializePoints() {
         User user = fetchUserFromCache();
@@ -100,23 +105,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Fetches the user from the cache.
+     * Fetches the user from the cache using the UserController and handles errors via ExceptionHandler.
+     *
      * @return The user object if found, otherwise null.
      */
     @Nullable
     private User fetchUserFromCache() {
         CacheManager cacheManager = new CacheManager(this);
         UserController userController = new UserController(this);
+
         OperationResponse<User> response = userController.getUserById(cacheManager.getUserId());
         if (response.isSuccessful()) {
             return response.getData();
         }
+
         Logger.e(TAG, "Error fetching user: " + response.getMessage());
         return null;
     }
 
     /**
      * Returns the LiveData object for the navigation helper.
+     *
      * @return The LiveData object for the navigation helper.
      */
     public LiveData<NavigationHelper> getNavigationHelperLiveData() {
@@ -124,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Returns the navigation helper.
+     * Returns the navigation helper instance.
+     *
      * @return The navigation helper.
      */
     public NavigationHelper getNavigationHelper() {

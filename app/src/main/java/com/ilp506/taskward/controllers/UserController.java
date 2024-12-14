@@ -15,9 +15,8 @@ import com.ilp506.taskward.utils.OperationResponse;
  * while handling errors and returning structured responses.
  */
 public class UserController {
-
+    private final ExceptionHandler exceptionHandler;
     private final UserRepository userRepository;
-
     private final CacheManager cacheManager;
 
     /**
@@ -26,6 +25,7 @@ public class UserController {
      * @param context The application context used to initialize the UserRepository.
      */
     public UserController(Context context) {
+        this.exceptionHandler = ExceptionHandler.getInstance();
         this.userRepository = new UserRepository(context);
         this.cacheManager = new CacheManager(context);
     }
@@ -55,18 +55,8 @@ public class UserController {
                 cacheManager.saveUserId(createdUser.getId());
 
             return OperationResponse.success("User created successfully", createdUser);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid user data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating user in the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while creating user");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while creating user");
+            return exceptionHandler.handleException(e, "Failed to create user.");
         }
     }
 
@@ -78,20 +68,15 @@ public class UserController {
      */
     public OperationResponse<User> getUserById(int userId) {
         try {
+            validateUserId(userId);
             User user = userRepository.getUserById(userId);
+
             if (user == null)
                 return OperationResponse.failure("User not found");
 
             return OperationResponse.success("User retrieved successfully", user);
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving user from the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while retrieving user");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while retrieving user");
+            return exceptionHandler.handleException(e, "Failed to retrieve user.");
         }
     }
 
@@ -104,26 +89,16 @@ public class UserController {
     public OperationResponse<User> updateUser(User user) {
         try {
             validateUserId(user.getId());
+            user.validate();
+
             User existingUser = userRepository.getUserById(user.getId());
             if (existingUser == null)
                 return OperationResponse.failure("User not found");
 
-            user.validate();
-
             User updatedUser = userRepository.updateUser(user);
             return OperationResponse.success("User updated successfully", updatedUser);
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid user data provided");
-        } catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating user in the database");
-        } catch (RuntimeException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while updating user");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while updating user");
+            return exceptionHandler.handleException(e, "Failed to update user.");
         }
     }
 
@@ -145,16 +120,8 @@ public class UserController {
                 cacheManager.clearCache();
 
             return OperationResponse.success("User deleted successfully");
-        } catch (IllegalArgumentException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Invalid user ID provided");
-        }
-        catch (DatabaseOperationException e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Error while deleting user from the database");
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return OperationResponse.failure("Unexpected error occurred while deleting user");
+            return exceptionHandler.handleException(e, "Failed to delete user.");
         }
     }
 }
