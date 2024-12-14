@@ -17,7 +17,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
-import com.ilp506.taskward.exceptions.NavigationHelperException;
+import com.ilp506.taskward.exceptions.custom.NavigationHelperException;
 
 /**
  * A helper class for managing navigation-related functionality in the app.

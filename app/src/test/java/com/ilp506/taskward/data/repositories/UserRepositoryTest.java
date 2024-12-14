@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteException;
 import com.ilp506.taskward.data.DatabaseContract.UserTable;
 import com.ilp506.taskward.data.DatabaseHelper;
 import com.ilp506.taskward.data.models.User;
-import com.ilp506.taskward.exceptions.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.custom.DatabaseOperationException;
 
 import org.junit.Before;
 import org.junit.Test;

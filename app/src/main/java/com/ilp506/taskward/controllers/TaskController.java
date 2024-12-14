@@ -6,7 +6,7 @@ import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
 import com.ilp506.taskward.data.repositories.TaskEventRepository;
 import com.ilp506.taskward.data.repositories.TaskRepository;
-import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.exceptions.handlers.ExceptionHandler;
 import com.ilp506.taskward.utils.OperationResponse;
 import com.ilp506.taskward.utils.TaskScheduler;
 

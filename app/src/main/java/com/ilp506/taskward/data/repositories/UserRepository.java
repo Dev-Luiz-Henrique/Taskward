@@ -6,10 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import androidx.annotation.NonNull;
+
 import com.ilp506.taskward.data.DatabaseContract.UserTable;
 import com.ilp506.taskward.data.DatabaseHelper;
 import com.ilp506.taskward.data.models.User;
-import com.ilp506.taskward.exceptions.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.codes.DatabaseErrorCode;
+import com.ilp506.taskward.exceptions.custom.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.handlers.DatabaseErrorHandler;
 import com.ilp506.taskward.utils.DateUtils;
 import com.ilp506.taskward.utils.Logger;
 
@@ -18,13 +22,12 @@ import com.ilp506.taskward.utils.Logger;
  * This class performs CRUD operations for the User model in the local SQLite database.
  */
 public class UserRepository {
-
     private static final String TAG = UserRepository.class.getSimpleName();
+
     private final DatabaseHelper dbHelper;
 
     /**
      * Constructs a UserRepository with a database helper instance.
-     * The database helper is responsible for managing database connections and operations.
      *
      * @param context The application context used to initialize the database helper.
      */
@@ -34,8 +37,6 @@ public class UserRepository {
 
     /**
      * Maps the data from a Cursor object to a User instance.
-     * This method retrieves data from the Cursor and converts it into a User object.
-     * It extracts the user details based on the column indices and handles potential exceptions.
      *
      * @param cursor The cursor containing the queried data.
      * @return A User instance populated with the cursor's data.
@@ -52,7 +53,6 @@ public class UserRepository {
             user.setCreatedAt(DateUtils.parseLocalDateTime(
                     cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_CREATED_AT))
             ));
-
         } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to User: " + e.getMessage(), e);
             throw new RuntimeException("Error mapping cursor to User: " + e.getMessage(), e);
@@ -61,18 +61,14 @@ public class UserRepository {
     }
 
     /**
-     * Creates a new user in the database.
-     * This method inserts a new user record into the database and retrieves the created User object.
-     * It throws an exception if the insert operation fails.
+     * Inserts a new user into the database.
      *
      * @param user The User instance to be created.
      * @return The created User instance.
      * @throws DatabaseOperationException If an error occurs during the database operation, such as an insertion failure.
-     * @throws RuntimeException If an error occurs during cursor mapping when retrieving the newly created user.
      */
-    public User createUser(User user) {
+    public User createUser(@NonNull User user) {
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
-
             ContentValues values = new ContentValues();
             values.put(UserTable.COLUMN_NAME, user.getName());
             values.put(UserTable.COLUMN_EMAIL, user.getEmail());
@@ -81,25 +77,23 @@ public class UserRepository {
             long newId = db.insertOrThrow(UserTable.TABLE_NAME, null, values);
             if (newId == -1) {
                 Logger.e(TAG, "Failed to insert new user");
-                throw new DatabaseOperationException("Failed to insert new user");
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        "Failed to insert user into the database."
+                );
             }
-
             return getUserById((int) newId);
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during user creation: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e, "Error during user creation.");
         }
     }
 
     /**
-     * Retrieves a user from the database by their ID.
-     * This method queries the database for a single user based on their ID. If the user is found,
-     * it returns the corresponding User object. Otherwise, it logs a warning and returns null.
+     * Retrieves a user by their ID from the database.
      *
      * @param userId The ID of the user to retrieve.
-     * @return The User instance if found, or null if not found.
-     * @throws DatabaseOperationException If an error occurs during the database operation.
-     * @throws RuntimeException If an error occurs while mapping the cursor data to the User object.
+     * @return The User instance if found.
+     * @throws DatabaseOperationException If an error occurs during the database operation or if the user is not found.
      */
     public User getUserById(int userId) {
         final String[] columns = UserTable.ALL_COLUMNS;
@@ -121,26 +115,26 @@ public class UserRepository {
                 return mapCursorToUser(cursor);
             else {
                 Logger.w(TAG, "User not found with ID: " + userId);
-                return null;
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        String.format("User with ID %d not found.", userId)
+                );
             }
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during getUserById: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error occurred while retrieving user with ID %d.", userId)
+            );
         }
     }
 
     /**
      * Updates an existing user's details in the database.
-     * This method modifies an existing user record in the database using the provided User instance.
-     * It throws an exception if no rows were updated, meaning the user with the given ID was not found.
      *
      * @param user The User instance containing updated data.
      * @return The updated User instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the user was not found
-     * or there was an error during the update.
-     * @throws RuntimeException If an error occurs while mapping the cursor data to the updated User object.
+     * @throws DatabaseOperationException If an error occurs during the database operation or if the user is not found.
      */
-    public User updateUser(User user) {
+    public User updateUser(@NonNull User user) {
         final String selection = UserTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(user.getId())};
 
@@ -152,20 +146,22 @@ public class UserRepository {
             values.put(UserTable.COLUMN_POINTS, user.getPoints());
 
             int rowsUpdated = db.update(UserTable.TABLE_NAME, values, selection, selectionArgs);
-            if (rowsUpdated == 0)
-                throw new DatabaseOperationException("No rows updated. User not found.");
-
+            if (rowsUpdated == 0) {
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
+                        "No rows updated. User not found."
+                );
+            }
             return getUserById(user.getId());
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during user update: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error during user update for ID %d.", user.getId())
+            );
         }
     }
 
     /**
-     * Deletes a user from the database by their ID.
-     * This method performs a deletion operation based on the provided user ID.
-     * If the user does not exist or the deletion fails, an exception is thrown.
+     * Deletes a user by their ID from the database.
      *
      * @param userId The ID of the user to delete.
      * @throws DatabaseOperationException If an error occurs during the database operation.
@@ -175,11 +171,17 @@ public class UserRepository {
         final String[] selectionArgs = {String.valueOf(userId)};
 
         try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
-            db.delete(UserTable.TABLE_NAME, selection, selectionArgs);
-
+            int rowsDeleted = db.delete(UserTable.TABLE_NAME, selection, selectionArgs);
+            if (rowsDeleted == 0) {
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        String.format("Failed to delete user with ID %d. User not found.", userId)
+                );
+            }
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during user deletion: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error during user deletion for ID %d.", userId)
+            );
         }
     }
 }

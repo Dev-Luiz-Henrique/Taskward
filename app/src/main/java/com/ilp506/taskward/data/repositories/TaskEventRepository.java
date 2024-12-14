@@ -6,12 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import androidx.annotation.NonNull;
+
 import com.ilp506.taskward.data.DatabaseContract.TaskEventTable;
 import com.ilp506.taskward.data.DatabaseContract.TaskTable;
 import com.ilp506.taskward.data.DatabaseHelper;
 import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
 import com.ilp506.taskward.data.models.TaskEvent;
-import com.ilp506.taskward.exceptions.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.codes.DatabaseErrorCode;
+import com.ilp506.taskward.exceptions.custom.DatabaseOperationException;
+import com.ilp506.taskward.exceptions.handlers.DatabaseErrorHandler;
 import com.ilp506.taskward.utils.DateUtils;
 import com.ilp506.taskward.utils.Logger;
 
@@ -28,25 +32,22 @@ public class TaskEventRepository {
     private final DatabaseHelper dbHelper;
 
     /**
-     * Constructor for TaskEventRepository.
-     * Initializes the DatabaseHelper instance using the provided context.
+     * Constructs a TaskEventRepository with a database helper instance.
      *
      * @param context The application context used to initialize the DatabaseHelper.
      */
-    public TaskEventRepository(Context context){
+    public TaskEventRepository(Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
     }
 
     /**
      * Maps the data from a Cursor object to a TaskEvent instance.
-     * This method retrieves data from the Cursor and converts it into a TaskEvent object.
-     * It extracts the task event details based on the column indices and handles potential exceptions.
      *
      * @param cursor The cursor containing the queried data.
      * @return A TaskEvent instance populated with the cursor's data.
-     * @throws RuntimeException If an error occurs during cursor mapping, such as missing or incorrect data format.
+     * @throws RuntimeException If an error occurs during cursor mapping.
      */
-    protected TaskEvent mapCursorToTaskEvent(Cursor cursor){
+    protected TaskEvent mapCursorToTaskEvent(Cursor cursor) {
         TaskEvent taskEvent = new TaskEvent();
         try {
             taskEvent.setId(cursor.getInt(cursor.getColumnIndexOrThrow(TaskEventTable.COLUMN_ID)));
@@ -69,7 +70,7 @@ public class TaskEventRepository {
             int titleIndex = cursor.getColumnIndex(TaskTable.COLUMN_TITLE);
             if (titleIndex != -1) taskEvent.setTitle(cursor.getString(titleIndex));
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Logger.e(TAG, "Error mapping cursor to TaskEvent: " + e.getMessage(), e);
             throw new RuntimeException("Error mapping cursor to TaskEvent: " + e.getMessage(), e);
         }
@@ -77,18 +78,14 @@ public class TaskEventRepository {
     }
 
     /**
-     * Creates a new task event in the database.
-     * This method inserts a new task event record into the database and retrieves the created TaskEvent object.
-     * It throws an exception if the insert operation fails.
+     * Creates a new TaskEvent in the database.
      *
      * @param taskEvent The TaskEvent instance to be created.
      * @return The created TaskEvent instance.
-     * @throws DatabaseOperationException If an error occurs during the database operation, such as an insertion failure.
-     * @throws RuntimeException If an error occurs during cursor mapping when retrieving the newly created task event.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
      */
-    public TaskEvent createTaskEvent(TaskEvent taskEvent){
-        try(SQLiteDatabase db = dbHelper.getWritableDatabase()){
-
+    public TaskEvent createTaskEvent(@NonNull TaskEvent taskEvent) {
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(TaskEventTable.COLUMN_USER_ID, taskEvent.getUserId());
             values.put(TaskEventTable.COLUMN_TASK_ID, taskEvent.getTaskId());
@@ -99,27 +96,25 @@ public class TaskEventRepository {
             values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatLocalDateTime(taskEvent.getCreatedAt()));
 
             long newId = db.insertOrThrow(TaskEventTable.TABLE_NAME, null, values);
-            if(newId == -1){
-                Logger.e(TAG, "Failed to insert new task event");
-                throw new DatabaseOperationException("Failed to insert new task event");
+            if (newId == -1) {
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        "Failed to insert TaskEvent into the database."
+                );
             }
             return getTaskEventById((int) newId);
-        } catch (SQLiteException e){
-            Logger.e(TAG, "SQLite error during task event creation: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            throw DatabaseErrorHandler.handleSQLiteException(e, "Error during TaskEvent creation.");
         }
     }
 
     /**
-     * Retrieves all task events from the database.
-     * This method queries the database for all task event records and returns them as a list of TaskEvent objects.
-     * If the database query fails, an exception is thrown.
+     * Retrieves all TaskEvents from the database.
      *
      * @return A list of TaskEvent instances.
      * @throws DatabaseOperationException If an error occurs during the database operation.
-     * @throws RuntimeException If an error occurs while mapping the cursor data to TaskEvent objects.
      */
-    public List<TaskEvent> getAllTaskEvents(){
+    public List<TaskEvent> getAllTaskEvents() {
         List<TaskEvent> taskEvents = new ArrayList<>();
         final String table = String.format(
                 "%s LEFT JOIN %s ON %s.%s = %s.%s",
@@ -136,81 +131,76 @@ public class TaskEventRepository {
                 TaskTable.TABLE_NAME + "." + TaskTable.COLUMN_TITLE
         };
 
-        try(SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.query(
-                    table,
-                    columns,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            )){
-            while(cursor.moveToNext()){
-                TaskEvent taskEvent = mapCursorToTaskEvent(cursor);
-                taskEvents.add(taskEvent);
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
+             Cursor cursor = db.query(
+                     table,
+                     columns,
+                     null,
+                     null,
+                     null,
+                     null,
+                     null
+             )) {
+            while (cursor.moveToNext()) {
+                taskEvents.add(mapCursorToTaskEvent(cursor));
             }
-            return taskEvents;
-        } catch (SQLiteException e){
-            Logger.e(TAG, "SQLite error during getAllTaskEvents: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            throw DatabaseErrorHandler.handleSQLiteException(e, "Error retrieving all TaskEvents.");
         }
+        return taskEvents;
     }
 
     /**
-     * Retrieves a task event from the database by its ID.
-     * This method queries the database for a specific task event record based on the provided taskEventId.
-     * It returns the corresponding TaskEvent object. Otherwise, it logs a warning and returns null.
+     * Retrieves a TaskEvent by its ID.
      *
-     * @param taskEventId The ID of the task event to retrieve.
-     * @return The TaskEvent instance if found, or null if not found.
+     * @param taskEventId The ID of the TaskEvent to retrieve.
+     * @return The TaskEvent instance if found.
      * @throws DatabaseOperationException If an error occurs during the database operation.
-     * @throws RuntimeException If an error occurs while mapping the cursor data to a TaskEvent object.
      */
-    public TaskEvent getTaskEventById(int taskEventId){
+    public TaskEvent getTaskEventById(int taskEventId) {
         final String[] columns = TaskEventTable.ALL_COLUMNS;
         final String selection = TaskEventTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(taskEventId)};
 
-        try(SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.query(
-                    TaskEventTable.TABLE_NAME,
-                    columns,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    null
-            )){
-            if(cursor.moveToFirst())
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
+             Cursor cursor = db.query(
+                     TaskEventTable.TABLE_NAME,
+                     columns,
+                     selection,
+                     selectionArgs,
+                     null,
+                     null,
+                     null
+             )) {
+
+            if (cursor.moveToFirst())
                 return mapCursorToTaskEvent(cursor);
             else {
-                Logger.w(TAG, "Task event not found with ID: " + taskEventId);
-                return null;
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        String.format("TaskEvent with ID %d not found.", taskEventId)
+                );
             }
-        } catch (SQLiteException e){
-            Logger.e(TAG, "SQLite error during getTaskEventById: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            throw DatabaseErrorHandler.handleSQLiteException(
+                    e,
+                    String.format("Error retrieving TaskEvent with ID %d.", taskEventId)
+            );
         }
     }
 
     /**
-     * Updates an existing task event in the database.
-     * This method modifies an existing task event record in the database using the provided TaskEvent instance.
-     * It throws an exception if no rows were updated, meaning the task event with the given ID was not found.
+     * Updates an existing TaskEvent in the database.
      *
      * @param taskEvent The TaskEvent instance containing updated data.
      * @return The updated TaskEvent instance.
-     * @throws DatabaseOperationException If no rows are updated, meaning the task event was not found
-     * or there was an error during the update.
-     * @throws RuntimeException If an error occurs during the database operation.
+     * @throws DatabaseOperationException If an error occurs during the database operation.
      */
-    public TaskEvent updateTaskEvent(TaskEvent taskEvent){
+    public TaskEvent updateTaskEvent(@NonNull TaskEvent taskEvent) {
         final String selection = TaskEventTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(taskEvent.getId())};
 
-        try(SQLiteDatabase db = dbHelper.getWritableDatabase()){
-
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(TaskEventTable.COLUMN_USER_ID, taskEvent.getUserId());
             values.put(TaskEventTable.COLUMN_TASK_ID, taskEvent.getTaskId());
@@ -221,34 +211,42 @@ public class TaskEventRepository {
             values.put(TaskEventTable.COLUMN_CREATED_AT, DateUtils.formatLocalDateTime(taskEvent.getCreatedAt()));
 
             int rowsUpdated = db.update(TaskEventTable.TABLE_NAME, values, selection, selectionArgs);
-            if(rowsUpdated == 0)
-                throw new DatabaseOperationException("No rows updated. Task event not found.");
-
+            if (rowsUpdated == 0) {
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.DATA_INTEGRITY_VIOLATION,
+                        "No rows updated. TaskEvent not found."
+                );
+            }
             return getTaskEventById(taskEvent.getId());
-        } catch (SQLiteException e){
-            Logger.e(TAG, "SQLite error during task event update: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        } catch (SQLiteException e) {
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error updating TaskEvent with ID %d.", taskEvent.getId())
+            );
         }
     }
 
     /**
-     * Deletes a task event from the database by its ID.
-     * This method performs a deletion operation based on the provided taskEventId.
-     * If the task event does not exist or the deletion fails, an exception is thrown.
+     * Deletes a TaskEvent by its ID.
      *
-     * @param taskEventId The ID of the task event to delete.
+     * @param taskEventId The ID of the TaskEvent to delete.
      * @throws DatabaseOperationException If an error occurs during the database operation.
      */
-    public void deleteTaskEvent(int taskEventId){
+    public void deleteTaskEvent(int taskEventId) {
         final String selection = TaskEventTable.COLUMN_ID + " = ?";
         final String[] selectionArgs = {String.valueOf(taskEventId)};
 
-        try(SQLiteDatabase db = dbHelper.getWritableDatabase()){
-            db.delete(TaskEventTable.TABLE_NAME, selection, selectionArgs);
-
-        } catch (SQLiteException e){
-            Logger.e(TAG, "SQLite error during task event deletion: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
+            int rowsDeleted = db.delete(TaskEventTable.TABLE_NAME, selection, selectionArgs);
+            if (rowsDeleted == 0) {
+                throw DatabaseOperationException.fromError(
+                        DatabaseErrorCode.QUERY_FAILURE,
+                        String.format("Failed to delete TaskEvent with ID %d. TaskEvent not found.", taskEventId)
+                );
+            }
+        } catch (SQLiteException e) {
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error deleting TaskEvent with ID %d.", taskEventId)
+            );
         }
     }
 
@@ -259,35 +257,36 @@ public class TaskEventRepository {
      * @return The next TaskEvent, or null if no next event exists.
      * @throws DatabaseOperationException If an error occurs during the database operation.
      */
-    public TaskEvent getNextTaskEvent(TaskEvent currentTaskEvent) {
+    public TaskEvent getNextTaskEvent(@NonNull TaskEvent currentTaskEvent) {
         final String query = "SELECT * FROM " + TaskEventTable.TABLE_NAME +
                 " WHERE " + TaskEventTable.COLUMN_TASK_ID + " = ? AND " +
                 TaskEventTable.COLUMN_SCHEDULED_DATE + " > ?" +
                 " ORDER BY " + TaskEventTable.COLUMN_SCHEDULED_DATE + " ASC LIMIT 1";
 
+        String taskId = String.valueOf(currentTaskEvent.getTaskId());
+        String formattedDate = DateUtils.formatLocalDateTime(currentTaskEvent.getScheduledDate());
+
         try (SQLiteDatabase db = dbHelper.getReadableDatabase();
-             Cursor cursor = db.rawQuery(query, new String[] {
-                     String.valueOf(currentTaskEvent.getTaskId()),
-                     DateUtils.formatLocalDateTime(currentTaskEvent.getScheduledDate())
-             })) {
+             Cursor cursor = db.rawQuery(query, new String[]{taskId, formattedDate})) {
 
             if (cursor.moveToFirst())
                 return mapCursorToTaskEvent(cursor);
             else {
-                Logger.w(TAG, "No next task event found for Task ID: " + currentTaskEvent.getTaskId());
+                Logger.w(TAG, String.format("No next TaskEvent found for Task ID %s after %s.", taskId, formattedDate));
                 return null;
             }
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during getNextTaskEvent: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error retrieving next TaskEvent for Task ID %s after %s.", taskId, formattedDate)
+            );
         }
     }
 
     /**
-     * Retrieves all task events associated with a specific task ID.
+     * Retrieves all TaskEvents associated with a specific Task ID.
      *
-     * @param taskId The ID of the task to retrieve task events for.
-     * @return A list of TaskEvent instances associated with the specified task ID.
+     * @param taskId The Task ID to retrieve TaskEvents for.
+     * @return A list of TaskEvent instances.
      * @throws DatabaseOperationException If an error occurs during the database operation.
      */
     public List<TaskEvent> getAllTaskEventsByTaskId(int taskId) {
@@ -306,15 +305,14 @@ public class TaskEventRepository {
                      null,
                      null
              )) {
-
             while (cursor.moveToNext()) {
-                TaskEvent taskEvent = mapCursorToTaskEvent(cursor);
-                taskEvents.add(taskEvent);
+                taskEvents.add(mapCursorToTaskEvent(cursor));
             }
-            return taskEvents;
         } catch (SQLiteException e) {
-            Logger.e(TAG, "SQLite error during getAllTaskEventsByTaskId: " + e.getMessage(), e);
-            throw new DatabaseOperationException("Database error: " + e.getMessage(), e);
+            throw DatabaseErrorHandler.handleSQLiteException(e,
+                    String.format("Error retrieving TaskEvents for Task ID %d.", taskId)
+            );
         }
+        return taskEvents;
     }
 }

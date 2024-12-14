@@ -1,4 +1,4 @@
-package com.ilp506.taskward.exceptions;
+package com.ilp506.taskward.exceptions.custom;
 
 /**
  * Custom exception to represent errors related to navigation operations.

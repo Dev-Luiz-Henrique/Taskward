@@ -1,7 +1,8 @@
-package com.ilp506.taskward.exceptions;
+package com.ilp506.taskward.exceptions.handlers;
 
 import androidx.annotation.NonNull;
 
+import com.ilp506.taskward.exceptions.custom.DatabaseOperationException;
 import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.OperationResponse;
 

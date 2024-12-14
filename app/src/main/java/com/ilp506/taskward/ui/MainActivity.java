@@ -20,7 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ilp506.taskward.R;
 import com.ilp506.taskward.controllers.UserController;
 import com.ilp506.taskward.data.models.User;
-import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.exceptions.handlers.ExceptionHandler;
 import com.ilp506.taskward.utils.CacheManager;
 import com.ilp506.taskward.utils.Logger;
 import com.ilp506.taskward.utils.NavigationHelper;
