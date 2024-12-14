@@ -5,11 +5,10 @@ import android.content.Context;
 import com.ilp506.taskward.data.enums.TaskEventStatusEnum;
 import com.ilp506.taskward.data.models.Task;
 import com.ilp506.taskward.data.models.TaskEvent;
-import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.TaskEventRepository;
 import com.ilp506.taskward.data.repositories.TaskRepository;
-import com.ilp506.taskward.data.repositories.UserRepository;
-import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.exceptions.handlers.ExceptionHandler;
+import com.ilp506.taskward.services.PointService;
 import com.ilp506.taskward.utils.OperationResponse;
 import com.ilp506.taskward.utils.TaskScheduler;
 
@@ -25,7 +24,7 @@ public class TaskEventController {
     private final ExceptionHandler exceptionHandler;
     private final TaskEventRepository taskEventRepository;
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
+    private final PointService pointService;
 
     /**
      * Constructs a TaskEventController with repository instances.
@@ -36,7 +35,7 @@ public class TaskEventController {
         this.exceptionHandler = ExceptionHandler.getInstance();
         this.taskEventRepository = new TaskEventRepository(context);
         this.taskRepository = new TaskRepository(context);
-        this.userRepository = new UserRepository(context);
+        this.pointService = new PointService(context);
     }
 
     /**
@@ -150,12 +149,9 @@ public class TaskEventController {
             event.setCompletedDate(LocalDateTime.now());
             taskEventRepository.updateTaskEvent(event);
 
-            // TODO implement error logic for when user is not found
-            User user = userRepository.getUserById(event.getUserId());
-            if (user != null) {
-                user.setPoints(user.getPoints() + event.getPointsEarned());
-                userRepository.updateUser(user);
-            }
+            boolean pointsUpdated = pointService.addPoints(event.getUserId(), event.getPointsEarned());
+            if (!pointsUpdated)
+                return OperationResponse.failure("Failed to update user points.");
 
             Task task = taskRepository.getTaskById(event.getTaskId());
             if (task != null) {
@@ -189,11 +185,9 @@ public class TaskEventController {
             event.setCompletedDate(null);
             taskEventRepository.updateTaskEvent(event);
 
-            User user = userRepository.getUserById(event.getUserId());
-            if (user != null) {
-                user.setPoints(user.getPoints() - event.getPointsEarned());
-                userRepository.updateUser(user);
-            }
+            boolean pointsUpdated = pointService.deductPoints(event.getUserId(), event.getPointsEarned());
+            if (!pointsUpdated)
+                return OperationResponse.failure("Failed to update user points.");
 
             Task task = taskRepository.getTaskById(event.getTaskId());
             if (task != null) {

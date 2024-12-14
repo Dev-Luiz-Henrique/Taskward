@@ -3,10 +3,9 @@ package com.ilp506.taskward.controllers;
 import android.content.Context;
 
 import com.ilp506.taskward.data.models.Reward;
-import com.ilp506.taskward.data.models.User;
 import com.ilp506.taskward.data.repositories.RewardRepository;
-import com.ilp506.taskward.data.repositories.UserRepository;
-import com.ilp506.taskward.exceptions.ExceptionHandler;
+import com.ilp506.taskward.exceptions.handlers.ExceptionHandler;
+import com.ilp506.taskward.services.PointService;
 import com.ilp506.taskward.utils.OperationResponse;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ import java.util.List;
 public class RewardController {
     private final ExceptionHandler exceptionHandler;
     private final RewardRepository rewardRepository;
-    private final UserRepository userRepository;
+    private final PointService pointService;
 
     /**
      * Constructs a RewardController with a RewardRepository and a UserRepository instance.
@@ -30,7 +29,7 @@ public class RewardController {
     public RewardController(Context context) {
         this.exceptionHandler = ExceptionHandler.getInstance();
         this.rewardRepository = new RewardRepository(context);
-        this.userRepository = new UserRepository(context);
+        this.pointService = new PointService(context);
     }
 
     /**
@@ -159,12 +158,12 @@ public class RewardController {
             existingReward.setDateRedeemed(LocalDateTime.now());
             rewardRepository.updateReward(existingReward);
 
-            User user = userRepository.getUserById(existingReward.getUserId());
-            if (user == null)
-                return OperationResponse.failure("User not found for the reward.");
-
-            user.setPoints(user.getPoints() - existingReward.getPointsRequired());
-            userRepository.updateUser(user);
+            boolean pointsUpdated = pointService.addPoints(
+                    existingReward.getUserId(),
+                    existingReward.getPointsRequired()
+            );
+            if (!pointsUpdated)
+                return OperationResponse.failure("Failed to update user points.");
 
             return OperationResponse.success("Reward redeemed successfully.");
         } catch (Exception e) {
