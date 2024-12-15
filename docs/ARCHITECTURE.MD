@@ -1,20 +1,42 @@
 # Taskward Architecture
 
-Taskward is a gamified task management application for Android. Below is an overview of the architecture and technology stack used to build the application. The system follows a multi-layer architecture designed to be scalable, maintainable, and easy to test.
+Taskward is a gamified task management application for Android. Below is an overview of the architecture and technology stack used to build the application. The system follows a layered architecture inspired by the **Model-View-Controller (MVC)** design pattern, with additional layers for scalability, maintainability, and testability. The project incorporates key design patterns such as **Singleton**, **Factory**, and **Observer** to enhance the robustness and flexibility of the application.
+
+---
 
 ## 1. Architecture Overview
 
-Taskward follows a layered architecture with a clear separation of concerns:
+Taskward's architecture is a **layered architecture inspired by MVC**, tailored for modern Android development. It combines the core principles of MVC with additional layers like **Service**, **Repository**, and **Utility** to ensure clear separation of concerns, modularity, and scalability. Design patterns such as **Singleton**, **Factory**, and **Observer** are used throughout the system to further enhance the design.
 
-- **Presentation Layer**: Handles user interaction (UI).
-- **Service Layer**: Contains business logic (e.g., task and reward management).
-- **Controller Layer**: Manages communication between the UI and the business logic.
-- **Data Layer**: Responsible for data persistence and database operations.
-- **Exception Layer**: Handles error management through custom exceptions.
+### Layers Overview:
+- **Presentation Layer (View)**: Handles user interaction (UI).
+- **Service Layer**: Encapsulates business logic and reusable operations (e.g., points management).
+- **Controller Layer**: Acts as a mediator between the Presentation and Service/Data layers.
+- **Data Layer (Model)**: Manages data persistence and database operations, abstracted by repositories.
+- **Exception Layer**: Centralizes error handling through custom exceptions.
+- **Utility Layer**: Provides reusable helpers for tasks like navigation, logging, and scheduling.
 
-This separation allows for easy maintenance, testing, and potential future scalability.
+This architecture ensures **maintainability**, **testability**, and **scalability**, while incorporating modern Android best practices.
 
-## 2. Technologies and Tools
+---
+
+## 2. Key Design Patterns
+
+### **Singleton**
+- **DatabaseHelper**: Ensures only one instance of the database manager is active using a singleton pattern.  
+  - This helps prevent connection conflicts and redundant resource usage.
+- **ExceptionHandler**: Centralizes error handling across the application and ensures consistent behavior through a single shared instance.
+
+### **Factory**
+- Custom exceptions, such as `DatabaseOperationException` and `NavigationHelperException`, implement **Factory Methods** to simplify and standardize exception creation.
+
+### **Observer**
+- **NavigationHelper**: Uses **LiveData** to observe and update points dynamically across the app's UI components.
+- **MainActivity**: Observes changes in user points via `NavigationHelper` and updates the UI (e.g., the points displayed on the toolbar).
+
+---
+
+## 3. Technologies and Tools
 
 ### Android SDK & Android Studio
 - **IDE**: Android Studio
@@ -30,69 +52,70 @@ This separation allows for easy maintenance, testing, and potential future scala
 - **JSQParser**: For handling SQL queries programmatically
 
 ### Database
-- **SQLite**: Direct interaction using `SQLiteOpenHelper` for data storage, without using the Room library.
-- **DatabaseHelper**: Handles database creation and management.
-- **DatabaseContract**: Defines the database schema (tables and columns).
+- **SQLite**: Direct interaction using `SQLiteOpenHelper` for data storage.
+- **DatabaseHelper**: Implements the **Singleton Pattern** and uses `executeSQLFromResource` to handle SQL scripts (e.g., database creation and initialization).
 
 ### APK Signing
 - APK is signed using `keystore.properties` for production releases.
 
-## 3. Project Layer Structure
+---
 
-The project is structured into different layers:
+## 4. Project Layer Structure
 
-### Controller Layer
-- Manages application logic and communication between the model and the view (UI).
-  - `RewardController.java`
-  - `TaskController.java`
-  - `TaskEventController.java`
-  - `UserController.java`
+### **Presentation Layer (UI Layer)**
+- Manages user interaction and displays data.
+  - **Activities**: e.g., `MainActivity.java`
+  - **Fragments**: e.g., `CreateProfileFragment.java`, `CreateRewardsFragment.java`
+- **Sub-packages**:
+  - **adapters**: Handles UI components like `RewardsAdapter.java`, `TaskAdapter.java`.
+  - **fragments**: Represents different screens in the app.
 
-### Data Layer
-- Handles data persistence and database interactions.
-  - `DatabaseContract.java`: Defines database schema.
-  - `DatabaseHelper.java`: Uses `SQLiteOpenHelper` for database management.
+### **Service Layer**
+- Encapsulates business logic and reusable operations.
+  - e.g., `PointService.java`: Manages points and rewards logic.
 
-- Sub-packages:
-  - **enums**: Contains constants like task status and frequency.
+### **Controller Layer**
+- Bridges the Presentation and Service layers, delegating tasks and managing communication.
+  - Examples: `RewardController.java`, `TaskController.java`, `UserController.java`.
+
+### **Data Layer**
+- Responsible for data persistence and database interactions.
+  - **DatabaseHelper.java**: A **Singleton** class managing SQLite database operations.
+  - **DatabaseContract.java**: Defines the database schema.
+- **Sub-packages**:
+  - **enums**: Constants like task status and frequency.
   - **models**: Represents data entities (`Reward.java`, `Task.java`, `TaskEvent.java`, `User.java`).
-  - **repositories**: CRUD operations for database access.
+  - **repositories**: Centralizes CRUD operations.
 
-### Exception Layer
-- Manages custom error handling.
-  - **codes**: Specific error codes (e.g., `DatabaseErrorCode.java`).
-  - **custom**: Custom exceptions for database operations.
-  - **handlers**: Error handling classes (e.g., `DatabaseErrorHandler.java`).
+### **Exception Layer**
+- Centralizes error handling with:
+  - **codes**: e.g., `DatabaseErrorCode.java`.
+  - **custom exceptions**: e.g., `DatabaseOperationException.java`, implementing **Factory Methods**.
+  - **handlers**: e.g., `ExceptionHandler.java`, a **Singleton** that processes and displays errors.
 
-### Service Layer
-- Contains core application logic.
-  - `PointService.java`: Manages points and rewards logic.
-
-### Presentation Layer (UI Layer)
-- Deals with UI elements, activities, and fragments.
-  - `MainActivity.java`
-  - **Fragments**: e.g., `CreateProfileFragment.java`, `CreateRewardsFragment.java`.
-
-- Sub-packages:
-  - **adapters**: Manages UI components like `RewardsAdapter.java`, `TaskAdapter.java`.
-  - **fragments**: Represent different screens in the app.
-
-### Utility Layer
+### **Utility Layer**
 - Provides helper functions for various tasks.
   - `CacheManager.java`: Manages data caching.
-  - `DateUtils.java`: Date handling functions.
-  - `Logger.java`: For logging.
-  - `NavigationHelper.java`: Handles navigation between activities/fragments and setup the BottomNavigationMenu and the Toolbar.
-  - `SQLScriptUtils.java`: Manages SQL scripts.
-  - `TaskScheduler.java`: Manages scheduled tasks.
-  - `UIUtils.java`: UI-related helper methods.
+  - `DateUtils.java`: Handles date formatting and operations.
+  - `Logger.java`: Simplifies logging.
+  - `NavigationHelper.java`: Implements navigation logic, observing user points using **LiveData**.
+  - `SQLScriptUtils.java`: Manages SQL scripts for database setup.
+  - `TaskScheduler.java`: Handles scheduled tasks.
 
-## 4. Design Pattern
 
-Taskward follows the **MVC (Model-View-Controller)** design pattern:
+## 5. Design Pattern and Layered Architecture
 
-- **Model**: Classes in the `models` package represent data and business logic (e.g., `Task.java`, `User.java`).
-- **View**: UI elements (e.g., `MainActivity.java`, `CreateProfileFragment.java`).
-- **Controller**: Classes in the `controllers` package (e.g., `TaskController.java`, `UserController.java`), which manage the interaction between the Model and View.
+Taskward follows a **layered architecture inspired by Model-View-Controller (MVC)**, enhanced with additional layers for better modularity and scalability:
 
-This approach ensures a clean separation 
+- **Model**: Handles data representation and business logic, abstracted via repositories.
+- **View**: Manages user interaction through UI components (Activities, Fragments, Adapters).
+- **Controller**: Mediates between the View and Service layers, delegating tasks and managing communication.
+
+### Modern Extensions:
+- **Service Layer**: Encapsulates reusable business logic, such as reward calculations and task management.
+- **Repository**: Provides a clean abstraction for data access, ensuring decoupled database operations.
+- **Singleton**: Used in classes like `DatabaseHelper` and `ExceptionHandler` to ensure consistent, centralized operations.
+- **Factory**: Standardizes exception creation in `DatabaseOperationException` and `NavigationHelperException`.
+- **Observer**: Implements live updates through `LiveData` in classes like `NavigationHelper` and `MainActivity`.
+
+This hybrid approach ensures clean separation of concerns while aligning with best practices for modern Android development.
