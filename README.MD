@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/usuario/taskward) [![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-blue)](LICENSE)
 
-🌐 **Read this in other languages:** [🇧🇷 Português](./docs/README.pt-BR.md)
+🌐 **Read this in other languages:** [🇧🇷 Português](./docs/README.PT-BR.MD)
 
 Taskward is an innovative Android app that turns task management into a motivating and fun experience using gamification elements.
 
@@ -89,7 +89,7 @@ Contributions are welcome! To collaborate:
 
 ## License
 
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** License. You are free to share and adapt the material for non-commercial purposes, as long as you give appropriate credit. For more details, see the [LICENSE](./docs/LICENSE) file.
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** License. You are free to share and adapt the material for non-commercial purposes, as long as you give appropriate credit. For more details, see the [LICENSE](./docs/LICENSE.MD) file.
 
 ## Contact
 
